@@ -157,3 +157,73 @@ function initMouseLightEffect() {
         });
     });
 }
+
+/* =========================================================
+   TÍNH NĂNG PHÁT NHẠC VÀ LƯU TRỮ NGOẠI TUYẾN (CACHE API)
+   ========================================================= */
+
+const CACHE_NAME = 'edupulse-music-cache-v1';
+const AUDIO_URL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=lofi-study-112191.mp3';
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkOfflineStatus();
+});
+
+// Hàm Phát / Tạm dừng nhạc
+function togglePlayMusic() {
+    const audio = document.getElementById('bg-audio');
+    const playBtn = document.getElementById('play-btn');
+    const statusEl = document.getElementById('track-status');
+
+    if (audio.paused) {
+        audio.play().then(() => {
+            playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+            statusEl.textContent = 'Đang phát nhạc Lofi học tập...';
+        }).catch(err => {
+            console.log("Lỗi phát nhạc:", err);
+            alert("Trình duyệt chặn phát tự động hoặc chưa tải được nguồn nhạc!");
+        });
+    } else {
+        audio.pause();
+        playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+        statusEl.textContent = 'Đã tạm dừng';
+    }
+}
+
+// Hàm tải xuống và lưu trữ tệp nhạc vào Cache của trình duyệt
+async function downloadAndCacheMusic() {
+    const statusEl = document.getElementById('track-status');
+    if (!('caches' in window)) {
+        alert("Trình duyệt của bạn không hỗ trợ tính năng lưu trữ ngoại tuyến này!");
+        return;
+    }
+
+    try {
+        statusEl.textContent = 'Đang tải xuống lưu trữ...';
+        const cache = await caches.open(CACHE_NAME);
+        await cache.add(AUDIO_URL);
+        
+        statusEl.textContent = 'Đã lưu ngoại tuyến thành công! (Offline ready)';
+        alert("Đã tải và lưu trữ tệp nhạc thành công vào thiết bị! Lần sau bạn có thể nghe ngay cả khi mất mạng.");
+    } catch (error) {
+        console.error("Lỗi khi lưu cache nhạc:", error);
+        statusEl.textContent = 'Lưu thất bại, thử lại sau.';
+        alert("Không thể tải xuống nhạc. Vui lòng kiểm tra kết nối mạng!");
+    }
+}
+
+// Kiểm tra trạng thái đã lưu cache hay chưa
+async function checkOfflineStatus() {
+    if (!('caches' in window)) return;
+    try {
+        const cache = await caches.open(CACHE_NAME);
+        const match = await cache.match(AUDIO_URL);
+        const statusEl = document.getElementById('track-status');
+        if (match) {
+            statusEl.textContent = 'Đã sẵn sàng ngoại tuyến (Offline Mode)';
+        }
+    } catch (e) {
+        console.log("Không thể kiểm tra cache:", e);
+    }
+}
