@@ -159,97 +159,57 @@ function initMouseLightEffect() {
 }
 
 /* =========================================================
-   TÍNH NĂNG PHÁT NHẠC VÀ LƯU TRỮ NGOẠI TUYẾN (CACHE API)
+   BỘ ĐIỀU KHIỂN NHẠC TỪ MÁY TÍNH (LOCAL MUSIC PLAYER)
    ========================================================= */
 
-const CACHE_NAME = 'edupulse-music-cache-v1';
-const AUDIO_URL = 'https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=lofi-study-112191.mp3';
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    checkOfflineStatus();
-});
-
-// Hàm Phát / Tạm dừng nhạc
-function togglePlayMusic() {
-    const audio = document.getElementById('bg-audio');
-    const playBtn = document.getElementById('play-btn');
-    const statusEl = document.getElementById('track-status');
-
-    if (audio.paused) {
-        audio.play().then(() => {
-            playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
-            statusEl.textContent = 'Đang phát nhạc Lofi học tập...';
-        }).catch(err => {
-            console.log("Lỗi phát nhạc:", err);
-            alert("Trình duyệt chặn phát tự động hoặc chưa tải được nguồn nhạc!");
-        });
-    } else {
-        audio.pause();
-        playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
-        statusEl.textContent = 'Đã tạm dừng';
-    }
-}
-
-// Hàm tải xuống và lưu trữ tệp nhạc vào Cache của trình duyệt
-async function downloadAndCacheMusic() {
-    const statusEl = document.getElementById('track-status');
-    if (!('caches' in window)) {
-        alert("Trình duyệt của bạn không hỗ trợ tính năng lưu trữ ngoại tuyến này!");
-        return;
-    }
-
-    try {
-        statusEl.textContent = 'Đang tải xuống lưu trữ...';
-        const cache = await caches.open(CACHE_NAME);
-        await cache.add(AUDIO_URL);
-        
-        statusEl.textContent = 'Đã lưu ngoại tuyến thành công! (Offline ready)';
-        alert("Đã tải và lưu trữ tệp nhạc thành công vào thiết bị! Lần sau bạn có thể nghe ngay cả khi mất mạng.");
-    } catch (error) {
-        console.error("Lỗi khi lưu cache nhạc:", error);
-        statusEl.textContent = 'Lưu thất bại, thử lại sau.';
-        alert("Không thể tải xuống nhạc. Vui lòng kiểm tra kết nối mạng!");
-    }
-}
-
-// Kiểm tra trạng thái đã lưu cache hay chưa
-async function checkOfflineStatus() {
-    if (!('caches' in window)) return;
-    try {
-        const cache = await caches.open(CACHE_NAME);
-        const match = await cache.match(AUDIO_URL);
-        const statusEl = document.getElementById('track-status');
-        if (match) {
-            statusEl.textContent = 'Đã sẵn sàng ngoại tuyến (Offline Mode)';
-        }
-    } catch (e) {
-        console.log("Không thể kiểm tra cache:", e);
-    }
-}
-
-/* XỬ LÝ TẢI VÀ PHÁT NHẠC TỪ MÁY TÍNH CỦA NGƯỜI DÙNG */
+// Hàm xử lý khi người dùng chọn file nhạc từ máy tính
 function handleLocalMusicUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Tạo đường dẫn tạm thời cho file nhạc trong trình duyệt
+    // Tạo đường dẫn tạm thời cho tệp âm thanh trên trình duyệt
     const musicURL = URL.createObjectURL(file);
     const audio = document.getElementById('bg-audio');
     const trackTitle = document.getElementById('track-title');
     const statusEl = document.getElementById('track-status');
     const playBtn = document.getElementById('play-btn');
 
-    // Cập nhật nguồn phát nhạc và tên bài hát theo tên file
+    // Gán nguồn nhạc và tên bài hát theo tên file thực tế của bạn
     audio.src = musicURL;
     trackTitle.textContent = file.name;
-    statusEl.textContent = 'Đã tải lên • Sẵn sàng phát';
+    statusEl.textContent = 'Đã tải lên thành công';
 
-    // Tự động phát luôn bài hát vừa tải lên
+    // Tự động phát nhạc ngay sau khi chọn file
     audio.play().then(() => {
         playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
-        statusEl.textContent = 'Đang phát nhạc của bạn...';
+        statusEl.textContent = 'Đang phát...';
     }).catch(err => {
-        console.log("Lỗi phát nhạc:", err);
+        console.log("Không thể tự động phát:", err);
+        statusEl.textContent = 'Bấm nút Play để nghe';
     });
+}
+
+// Hàm Bật / Tạm dừng phát nhạc
+function togglePlayMusic() {
+    const audio = document.getElementById('bg-audio');
+    const playBtn = document.getElementById('play-btn');
+    const statusEl = document.getElementById('track-status');
+
+    if (!audio.src) {
+        alert("Vui lòng bấm vào icon thư mục để chọn một file nhạc MP3 từ máy tính trước nhé!");
+        return;
+    }
+
+    if (audio.paused) {
+        audio.play().then(() => {
+            playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+            statusEl.textContent = 'Đang phát...';
+        }).catch(err => {
+            console.log("Lỗi phát nhạc:", err);
+        });
+    } else {
+        audio.pause();
+        playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+        statusEl.textContent = 'Đã tạm dừng';
+    }
 }
