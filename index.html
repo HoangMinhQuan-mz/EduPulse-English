@@ -107,5 +107,12 @@
     <audio id="bg-audio" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=lofi-study-112191.mp3" preload="none"></audio>
 </div>
 
+<!-- Nút tải file nhạc từ máy tính -->
+<label title="Tải nhạc từ máy của bạn" class="cursor-pointer p-2 text-slate-600 hover:text-indigo-600 transition">
+    <i class="fa-solid fa-folder-open text-sm"></i>
+    <input type="file" id="upload-music" accept="audio/*" class="hidden" onchange="handleLocalMusicUpload(event)">
+</label>
+
+     
 </body>
 </html>
