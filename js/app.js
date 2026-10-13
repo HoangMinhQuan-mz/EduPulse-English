@@ -227,3 +227,29 @@ async function checkOfflineStatus() {
         console.log("Không thể kiểm tra cache:", e);
     }
 }
+
+/* XỬ LÝ TẢI VÀ PHÁT NHẠC TỪ MÁY TÍNH CỦA NGƯỜI DÙNG */
+function handleLocalMusicUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Tạo đường dẫn tạm thời cho file nhạc trong trình duyệt
+    const musicURL = URL.createObjectURL(file);
+    const audio = document.getElementById('bg-audio');
+    const trackTitle = document.getElementById('track-title');
+    const statusEl = document.getElementById('track-status');
+    const playBtn = document.getElementById('play-btn');
+
+    // Cập nhật nguồn phát nhạc và tên bài hát theo tên file
+    audio.src = musicURL;
+    trackTitle.textContent = file.name;
+    statusEl.textContent = 'Đã tải lên • Sẵn sàng phát';
+
+    // Tự động phát luôn bài hát vừa tải lên
+    audio.play().then(() => {
+        playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+        statusEl.textContent = 'Đang phát nhạc của bạn...';
+    }).catch(err => {
+        console.log("Lỗi phát nhạc:", err);
+    });
+}
