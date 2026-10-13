@@ -159,57 +159,179 @@ function initMouseLightEffect() {
 }
 
 /* =========================================================
-   BỘ ĐIỀU KHIỂN NHẠC TỪ MÁY TÍNH (LOCAL MUSIC PLAYER)
+   HỆ THỐNG QUẢN LÝ PLAYLIST, THU NHỎ VÀ KÉO THẢ WIDGET NHẠC
    ========================================================= */
 
-// Hàm xử lý khi người dùng chọn file nhạc từ máy tính
-function handleLocalMusicUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+let playlist = [];
+let currentTrackIndex = -1;
+let isMinimized = false;
 
-    // Tạo đường dẫn tạm thời cho tệp âm thanh trên trình duyệt
-    const musicURL = URL.createObjectURL(file);
+// 1. Xử lý tải lên danh sách bài hát từ máy tính
+function handleMusicUpload(event) {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const musicURL = URL.createObjectURL(file);
+        playlist.push({
+            name: file.name,
+            url: musicURL
+        });
+    }
+
+    renderPlaylist();
+
+    // Nếu trước đó chưa phát bài nào thì tự động phát bài đầu tiên vừa tải
+    if (currentTrackIndex === -1 && playlist.length > 0) {
+        playTrack(0);
+    }
+}
+
+// 2. Hiển thị danh sách phát ra giao diện
+function renderPlaylist() {
+    const container = document.getElementById('playlist-container');
+    const countEl = document.getElementById('playlist-count');
+    if (!container) return;
+
+    countEl.textContent = playlist.length;
+    container.innerHTML = '';
+
+    playlist.forEach((track, index) => {
+        const isActive = index === currentTrackIndex;
+        const itemHTML = `
+            <div onclick="playTrack(${index})" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition ${isActive ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100' : 'hover:bg-slate-100 text-slate-700'}">
+                <div class="flex items-center gap-2 truncate flex-1">
+                    <i class="fa-solid ${isActive ? 'fa-volume-high text-indigo-600' : 'fa-music text-slate-400'} text-[10px]"></i>
+                    <span class="truncate text-xs">${track.name}</span>
+                </div>
+                ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded ml-2">Đang phát</span>' : ''}
+            </div>
+        `;
+        container.innerHTML += itemHTML;
+    });
+}
+
+// 3. Phát bài hát theo chỉ số (index) trong playlist
+function playTrack(index) {
+    if (index < 0 || index >= playlist.length) return;
+    currentTrackIndex = index;
+    const track = playlist[index];
+
     const audio = document.getElementById('bg-audio');
     const trackTitle = document.getElementById('track-title');
     const statusEl = document.getElementById('track-status');
     const playBtn = document.getElementById('play-btn');
 
-    // Gán nguồn nhạc và tên bài hát theo tên file thực tế của bạn
-    audio.src = musicURL;
-    trackTitle.textContent = file.name;
-    statusEl.textContent = 'Đã tải lên thành công';
+    audio.src = track.url;
+    trackTitle.textContent = track.name;
+    statusEl.textContent = `Bài ${index + 1} / ${playlist.length}`;
 
-    // Tự động phát nhạc ngay sau khi chọn file
     audio.play().then(() => {
         playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
-        statusEl.textContent = 'Đang phát...';
     }).catch(err => {
-        console.log("Không thể tự động phát:", err);
-        statusEl.textContent = 'Bấm nút Play để nghe';
+        console.log("Lỗi phát nhạc:", err);
     });
+
+    renderPlaylist();
 }
 
-// Hàm Bật / Tạm dừng phát nhạc
+// 4. Bật / Tạm dừng phát nhạc
 function togglePlayMusic() {
     const audio = document.getElementById('bg-audio');
     const playBtn = document.getElementById('play-btn');
-    const statusEl = document.getElementById('track-status');
 
-    if (!audio.src) {
-        alert("Vui lòng bấm vào icon thư mục để chọn một file nhạc MP3 từ máy tính trước nhé!");
+    if (playlist.length === 0) {
+        alert("Vui lòng bấm 'Thêm nhạc' để chọn các file MP3 từ máy tính trước nhé!");
+        return;
+    }
+
+    if (currentTrackIndex === -1) {
+        playTrack(0);
         return;
     }
 
     if (audio.paused) {
         audio.play().then(() => {
             playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
-            statusEl.textContent = 'Đang phát...';
-        }).catch(err => {
-            console.log("Lỗi phát nhạc:", err);
         });
     } else {
         audio.pause();
         playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
-        statusEl.textContent = 'Đã tạm dừng';
     }
 }
+
+// 5. Chuyển bài trước / Bài tiếp theo
+function playNextTrack() {
+    if (playlist.length === 0) return;
+    let nextIndex = currentTrackIndex + 1;
+    if (nextIndex >= playlist.length) nextIndex = 0; // Quay về bài đầu tiên
+    playTrack(nextIndex);
+}
+
+function playPreviousTrack() {
+    if (playlist.length === 0) return;
+    let prevIndex = currentTrackIndex - 1;
+    if (prevIndex < 0) prevIndex = playlist.length - 1; // Nhảy về bài cuối
+    playTrack(prevIndex);
+}
+
+// 6. Tính năng Thu nhỏ / Mở rộng widget
+function toggleMinimizeWidget() {
+    const body = document.getElementById('widget-body');
+    const minimizeBtn = document.getElementById('minimize-btn');
+    const widget = document.getElementById('music-player-widget');
+
+    isMinimized = !isMinimized;
+    if (isMinimized) {
+        body.classList.add('hidden');
+        minimizeBtn.innerHTML = '<i class="fa-solid fa-window-maximize text-xs"></i>';
+        widget.style.width = '240px';
+    } else {
+        body.classList.remove('hidden');
+        minimizeBtn.innerHTML = '<i class="fa-solid fa-window-minimize text-xs"></i>';
+        widget.style.width = '320px';
+    }
+}
+
+// 7. Tính năng Kéo thả tự do (Draggable Widget)
+document.addEventListener('DOMContentLoaded', () => {
+    const widget = document.getElementById('music-player-widget');
+    const header = document.getElementById('widget-header');
+
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - widget.getBoundingClientRect().left;
+        offsetY = e.clientY - widget.getBoundingClientRect().top;
+        widget.style.transition = 'none'; // Tắt hiệu ứng mượt khi đang kéo để chuột nhạy tuyệt đối
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        let x = e.clientX - offsetX;
+        let y = e.clientY - offsetY;
+
+        // Giới hạn không cho widget kéo ra ngoài màn hình
+        const maxX = window.innerWidth - widget.offsetWidth;
+        const maxY = window.innerHeight - widget.offsetHeight;
+
+        x = Math.max(0, Math.min(x, maxX));
+        y = Math.max(0, Math.min(y, maxY));
+
+        widget.style.left = `${x}px`;
+        widget.style.top = `${y}px`;
+        widget.style.bottom = 'auto';
+        widget.style.right = 'auto';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            widget.style.transition = 'all 0.3s ease';
+        }
+    });
+});
