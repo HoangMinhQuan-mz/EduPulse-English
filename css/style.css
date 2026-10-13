@@ -93,10 +93,10 @@ body {
     overflow: hidden;
     background: #ffffff;
     border: 1px solid rgba(226, 232, 240, 0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-/* Lớp phủ ánh sáng đi theo chuột */
+/* Lớp phủ ánh sáng bám theo tọa độ chuột */
 #unit-list-container > div::before {
     content: '';
     position: absolute;
@@ -104,47 +104,75 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Tạo tâm sáng hình tròn đi theo tọa độ --x và --y của chuột */
+    
     background: radial-gradient(
-        800px circle at var(--mouse-x) var(--mouse-y),
-        rgba(99, 102, 241, 0.15),
-        transparent 40%
+        400px circle at var(--mouse-x) var(--mouse-y),
+        rgba(99, 102, 241, 0.25),
+        rgba(168, 85, 247, 0.1) 40%,
+        transparent 70%
     );
     opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none; /* Đảm bảo không cản trở việc click chuột */
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none; 
     z-index: 1;
 }
 
-/* Khi rê chuột vào card thì hiện lớp ánh sáng lên */
+
 #unit-list-container > div:hover::before {
     opacity: 1;
 }
 
 #unit-list-container > div:hover {
     transform: translateY(-6px);
-    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.2);
+    border-color: rgba(99, 102, 241, 0.5);
 }
 
-/* Đảm bảo nội dung bên trong card hiển thị đè lên lớp ánh sáng */
+
 #unit-list-container > div > * {
     position: relative;
     z-index: 2;
 }
 
-/* XỬ LÝ TỌA ĐỘ CHUỘT CHO HIỆU ỨNG ÁNH SÁNG QUÉT THEO CHUỘT */
+/* Hàm hiển thị danh sách bài học (Units) lên màn hình */
+function renderUnitList() {
+    const container = document.getElementById('unit-list-container');
+    if (!container || !currentUnitData) return;
+
+    container.innerHTML = '';
+
+    currentUnitData.units.forEach(unit => {
+        const cardHTML = `
+            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm transition flex flex-col justify-between">
+                <div>
+                    <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md text-xs font-semibold mb-2">
+                        ${unit.vocab.length} Từ vựng • ${unit.quiz.length} Câu hỏi trắc nghiệm
+                    </span>
+                    <h3 class="font-bold text-lg text-slate-800">${unit.title}</h3>
+                    <p class="text-sm text-slate-600 mt-1 mb-4">${unit.description}</p>
+                </div>
+                <button onclick="openUnitDetail('${unit.id}')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i> Vào học bài này
+                </button>
+            </div>
+        `;
+        container.innerHTML += cardHTML;
+    });
+
+    /* KÍCH HOẠT HIỆU ỨNG CHUỘT NGAY SAU KHI RENDER XONG CARD */
+    initMouseLightEffect();
+}
+
+/* Xử lý tọa độ con chuột để tạo hiệu ứng ánh sáng quét theo con trỏ */
 function initMouseLightEffect() {
     const cards = document.querySelectorAll('#unit-list-container > div');
     
     cards.forEach(card => {
         card.addEventListener('mousemove', e => {
             const rect = card.getBoundingClientRect();
-            /* Lấy tọa độ X và Y của con chuột bên trong card */
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             
-            /* Gán giá trị vào biến CSS tùy chỉnh của từng card */
             card.style.setProperty('--mouse-x', `${x}px`);
             card.style.setProperty('--mouse-y', `${y}px`);
         });
