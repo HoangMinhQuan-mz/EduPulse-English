@@ -1,93 +1,23 @@
 /* =========================================================
-   EDUPULSE ENGLISH - STYLESHEET CHÍNH
-   Mô tả: Tùy chỉnh giao diện, hiệu ứng Glassmorphic & Animation
+   EDUPULSE ENGLISH - STYLESHEET CHÍNH & ANIMATION
    ========================================================= */
 
-/*  Cấu hình Font chữ & Màu nền chủ đạo */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
 }
 
-/*  Hiệu ứng kính mờ (Glassmorphism) */
 .glass-card {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
 }
 
-/*  Hiệu ứng xoay lật 3D cho Thẻ từ vựng Flashcard */
 .flashcard-inner {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-style: preserve-3d; /* Giữ không gian 3D khi xoay */
+    transform-style: preserve-3d;
 }
 
-/* Hiệu ứng hover cho các Card bài học (Unit Card) */
-#unit-list-container > div {
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#unit-list-container > div:hover {
-    transform: translateY(-6px); /* Nổi lên trên một chút */
-    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1), 0 10px 10px -5px rgba(99, 102, 241, 0.04);
-    border-color: rgba(99, 102, 241, 0.3);
-}
-
-/* Hiệu ứng hover cho nút "Vào học bài này" */
-#unit-list-container button {
-    transition: all 0.25s ease-in-out;
-}
-
-#unit-list-container button:hover {
-    transform: scale(1.02); /* Phóng to nhẹ nút bấm */
-    filter: brightness(1.08); /* Sáng hơn một chút */
-}
-
-#unit-list-container button:active {
-    transform: scale(0.98); /* Hiệu ứng nhấn xuống */
-}
-
-/* Hiệu ứng mượt mà khi chuyển đổi khối lớp trên Header */
-#grade-selector button {
-    transition: all 0.2s ease-in-out;
-}
-
-#grade-selector button:hover {
-    color: #4f46e5;
-}
-
-/* Hiệu ứng xuất hiện mượt mà (Fade In) cho danh sách bài học */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-#unit-list-container {
-    animation: fadeIn 0.4s ease-out forwards;
-}
-
-/*  Custom Scrollbar mượt mà */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
-::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-}
-
-/* HIỆU ỨNG ÁNH SÁNG ĐUỔI THEO CON CHUỘT (SPOTLIGHT CARD) */
-
+/* Hiệu ứng hover cho Card bài học */
 #unit-list-container > div {
     position: relative;
     overflow: hidden;
@@ -104,7 +34,6 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    
     background: radial-gradient(
         400px circle at var(--mouse-x) var(--mouse-y),
         rgba(99, 102, 241, 0.25),
@@ -113,10 +42,9 @@ body {
     );
     opacity: 0;
     transition: opacity 0.2s ease-in-out;
-    pointer-events: none; 
+    pointer-events: none;
     z-index: 1;
 }
-
 
 #unit-list-container > div:hover::before {
     opacity: 1;
@@ -128,53 +56,39 @@ body {
     border-color: rgba(99, 102, 241, 0.5);
 }
 
-
 #unit-list-container > div > * {
     position: relative;
     z-index: 2;
 }
 
-/* Hàm hiển thị danh sách bài học (Units) lên màn hình */
-function renderUnitList() {
-    const container = document.getElementById('unit-list-container');
-    if (!container || !currentUnitData) return;
-
-    container.innerHTML = '';
-
-    currentUnitData.units.forEach(unit => {
-        const cardHTML = `
-            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm transition flex flex-col justify-between">
-                <div>
-                    <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md text-xs font-semibold mb-2">
-                        ${unit.vocab.length} Từ vựng • ${unit.quiz.length} Câu hỏi trắc nghiệm
-                    </span>
-                    <h3 class="font-bold text-lg text-slate-800">${unit.title}</h3>
-                    <p class="text-sm text-slate-600 mt-1 mb-4">${unit.description}</p>
-                </div>
-                <button onclick="openUnitDetail('${unit.id}')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-graduation-cap"></i> Vào học bài này
-                </button>
-            </div>
-        `;
-        container.innerHTML += cardHTML;
-    });
-
-    /* KÍCH HOẠT HIỆU ỨNG CHUỘT NGAY SAU KHI RENDER XONG CARD */
-    initMouseLightEffect();
+/* Hiệu ứng nút bấm */
+#unit-list-container button {
+    transition: all 0.25s ease-in-out;
+}
+#unit-list-container button:hover {
+    transform: scale(1.02);
+    filter: brightness(1.08);
+}
+#unit-list-container button:active {
+    transform: scale(0.98);
 }
 
-/* Xử lý tọa độ con chuột để tạo hiệu ứng ánh sáng quét theo con trỏ */
-function initMouseLightEffect() {
-    const cards = document.querySelectorAll('#unit-list-container > div');
-    
-    cards.forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        });
-    });
+#grade-selector button {
+    transition: all 0.2s ease-in-out;
 }
+#grade-selector button:hover {
+    color: #4f46e5;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#unit-list-container {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
