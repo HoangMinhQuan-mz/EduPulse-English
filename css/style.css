@@ -71,7 +71,7 @@ body {
     animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* 4. Custom Scrollbar mượt mà */
+/*  Custom Scrollbar mượt mà */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -84,4 +84,69 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+
+/* HIỆU ỨNG ÁNH SÁNG ĐUỔI THEO CON CHUỘT (SPOTLIGHT CARD) */
+
+#unit-list-container > div {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Lớp phủ ánh sáng đi theo chuột */
+#unit-list-container > div::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Tạo tâm sáng hình tròn đi theo tọa độ --x và --y của chuột */
+    background: radial-gradient(
+        800px circle at var(--mouse-x) var(--mouse-y),
+        rgba(99, 102, 241, 0.15),
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none; /* Đảm bảo không cản trở việc click chuột */
+    z-index: 1;
+}
+
+/* Khi rê chuột vào card thì hiện lớp ánh sáng lên */
+#unit-list-container > div:hover::before {
+    opacity: 1;
+}
+
+#unit-list-container > div:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* Đảm bảo nội dung bên trong card hiển thị đè lên lớp ánh sáng */
+#unit-list-container > div > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* XỬ LÝ TỌA ĐỘ CHUỘT CHO HIỆU ỨNG ÁNH SÁNG QUÉT THEO CHUỘT */
+function initMouseLightEffect() {
+    const cards = document.querySelectorAll('#unit-list-container > div');
+    
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            /* Lấy tọa độ X và Y của con chuột bên trong card */
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            /* Gán giá trị vào biến CSS tùy chỉnh của từng card */
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
 }
