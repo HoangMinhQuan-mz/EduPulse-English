@@ -108,3 +108,52 @@ function loadUserProgress() {
         console.log("Đã tải tiến độ học tập đã lưu:", progress);
     }
 }
+
+/* =========================================================
+   HÀM RENDER VÀ KÍCH HOẠT HIỆU ỨNG ÁNH SÁNG THEO CHUỘT
+   ========================================================= */
+
+// Hàm hiển thị danh sách bài học (Units) lên màn hình
+function renderUnitList() {
+    const container = document.getElementById('unit-list-container');
+    if (!container || !currentUnitData) return;
+
+    container.innerHTML = '';
+
+    currentUnitData.units.forEach(unit => {
+        const cardHTML = `
+            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm transition flex flex-col justify-between">
+                <div>
+                    <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md text-xs font-semibold mb-2">
+                        ${unit.vocab.length} Từ vựng • ${unit.quiz.length} Câu hỏi trắc nghiệm
+                    </span>
+                    <h3 class="font-bold text-lg text-slate-800">${unit.title}</h3>
+                    <p class="text-sm text-slate-600 mt-1 mb-4">${unit.description}</p>
+                </div>
+                <button onclick="openUnitDetail('${unit.id}')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i> Vào học bài này
+                </button>
+            </div>
+        `;
+        container.innerHTML += cardHTML;
+    });
+
+    // KÍCH HOẠT HIỆU ỨNG CHUỘT NGAY SAU KHI RENDER XONG CARD
+    initMouseLightEffect();
+}
+
+// Xử lý tọa độ con chuột để tạo hiệu ứng ánh sáng quét theo con trỏ
+function initMouseLightEffect() {
+    const cards = document.querySelectorAll('#unit-list-container > div');
+    
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+}
