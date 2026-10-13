@@ -3,20 +3,85 @@
    Mô tả: Tùy chỉnh giao diện, hiệu ứng Glassmorphic & Animation
    ========================================================= */
 
-/* 1. Cấu hình Font chữ & Màu nền chủ đạo */
+/*  Cấu hình Font chữ & Màu nền chủ đạo */
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f8fafc;
 }
 
-/* 2. Hiệu ứng kính mờ (Glassmorphism) */
+/*  Hiệu ứng kính mờ (Glassmorphism) */
 .glass-card {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(12px);
 }
 
-/* 3. Hiệu ứng xoay lật 3D cho Thẻ từ vựng Flashcard */
+/*  Hiệu ứng xoay lật 3D cho Thẻ từ vựng Flashcard */
 .flashcard-inner {
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d; /* Giữ không gian 3D khi xoay */
+}
+
+/* Hiệu ứng hover cho các Card bài học (Unit Card) */
+#unit-list-container > div {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#unit-list-container > div:hover {
+    transform: translateY(-6px); /* Nổi lên trên một chút */
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.1), 0 10px 10px -5px rgba(99, 102, 241, 0.04);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Hiệu ứng hover cho nút "Vào học bài này" */
+#unit-list-container button {
+    transition: all 0.25s ease-in-out;
+}
+
+#unit-list-container button:hover {
+    transform: scale(1.02); /* Phóng to nhẹ nút bấm */
+    filter: brightness(1.08); /* Sáng hơn một chút */
+}
+
+#unit-list-container button:active {
+    transform: scale(0.98); /* Hiệu ứng nhấn xuống */
+}
+
+/* Hiệu ứng mượt mà khi chuyển đổi khối lớp trên Header */
+#grade-selector button {
+    transition: all 0.2s ease-in-out;
+}
+
+#grade-selector button:hover {
+    color: #4f46e5;
+}
+
+/* Hiệu ứng xuất hiện mượt mà (Fade In) cho danh sách bài học */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#unit-list-container {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* 4. Custom Scrollbar mượt mà */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
