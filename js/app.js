@@ -3,46 +3,70 @@
    Mục đích: Bộ điều khiển trung tâm (App Logic & DOM Rendering)
    ========================================================= */
 
-// Khởi tạo ứng dụng ngay khi trang tải xong
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("EduPulse English - Hệ thống đã khởi động thành công.");
-    initApp();
-});
-
 // Biến trạng thái toàn cục (Global State)
 let currentGrade = 10;
 let currentUnitData = null;
+let playlist = [];
+let currentTrackIndex = -1;
+let isMinimized = false;
+let isUserLoggedIn = false;
 
-// Hàm khởi chạy ứng dụng
+/* =========================================================
+   1. KHỞI TẠO ỨNG DỤNG KHI TẢI TRANG
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("EduPulse English - Hệ thống đã khởi động thành công.");
+    
+    // Khởi chạy giao diện bài học
+    initApp();
+
+    // Kiểm tra phiên đăng nhập Google cũ
+    const savedUser = localStorage.getItem('edupulse_user');
+    if (savedUser) {
+        applyLoggedInUI(JSON.parse(savedUser));
+    }
+    
+    // Khởi tạo Google Identity Services
+    if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.initialize({
+            client_id: "538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+        });
+    }
+
+    // Tải danh sách nhạc đã lưu trữ
+    loadPlaylistFromStorage();
+
+    // Kích hoạt kéo thả Widget Nhạc
+    initMusicWidgetDrag();
+});
+
+
+/* =========================================================
+   2. HỆ THỐNG CHUYỂN ĐỔI KHỐI LỚP & BÀI HỌC
+   ========================================================= */
+
 function initApp() {
     loadUserProgress();
-    // Mặc định nạp dữ liệu Khối 10 khi mở trang
     switchGrade(10);
 }
 
-// Hàm chuyển đổi giữa các khối lớp (10, 11, 12)
 function switchGrade(gradeNumber) {
     currentGrade = gradeNumber;
-    console.log(`Đã chuyển sang Khối ${gradeNumber}`);
-
-    // Cập nhật trạng thái hiển thị của nút bấm trên Header
     updateGradeButtonsUI(gradeNumber);
 
-    // Gán dữ liệu tương ứng dựa trên khối lớp
     if (gradeNumber === 10) {
-        currentUnitData = grade10Data;
+        currentUnitData = typeof grade10Data !== 'undefined' ? grade10Data : null;
     } else if (gradeNumber === 11) {
-        currentUnitData = grade11Data;
+        currentUnitData = typeof grade11Data !== 'undefined' ? grade11Data : null;
     } else if (gradeNumber === 12) {
-        currentUnitData = grade12Data;
+        currentUnitData = typeof grade12Data !== 'undefined' ? grade12Data : null;
     }
 
-    // Cập nhật tiêu đề Banner & Render danh sách bài học ra giao diện
     updateBannerInfo();
     renderUnitList();
 }
 
-// Hàm cập nhật giao diện nút bấm chọn khối
 function updateGradeButtonsUI(activeGrade) {
     for (let i = 10; i <= 12; i++) {
         const btn = document.getElementById(`btn-grade-${i}`);
@@ -56,7 +80,6 @@ function updateGradeButtonsUI(activeGrade) {
     }
 }
 
-// Hàm cập nhật nội dung Banner theo khối
 function updateBannerInfo() {
     const titleEl = document.getElementById('grade-title');
     const descEl = document.getElementById('grade-desc');
@@ -69,54 +92,9 @@ function updateBannerInfo() {
     }
 }
 
-// Hàm hiển thị danh sách bài học (Units) lên màn hình
 function renderUnitList() {
     const container = document.getElementById('unit-list-container');
-    if (!container || !currentUnitData) return;
-
-    container.innerHTML = '';
-
-    currentUnitData.units.forEach(unit => {
-        const cardHTML = `
-            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
-                <div>
-                    <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md text-xs font-semibold mb-2">
-                        ${unit.vocab.length} Từ vựng • ${unit.quiz.length} Câu hỏi trắc nghiệm
-                    </span>
-                    <h3 class="font-bold text-lg text-slate-800">${unit.title}</h3>
-                    <p class="text-sm text-slate-600 mt-1 mb-4">${unit.description}</p>
-                </div>
-                <button onclick="openUnitDetail('${unit.id}')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-graduation-cap"></i> Vào học bài này
-                </button>
-            </div>
-        `;
-        container.innerHTML += cardHTML;
-    });
-}
-
-// Hàm mở chi tiết bài học (Sẽ phát triển thêm tính năng học từ vựng & làm quiz ở bước tới)
-function openUnitDetail(unitId) {
-    alert(`Đang mở bài học có mã: ${unitId}\nTính năng học Flashcard và Trắc nghiệm tương tác sẽ được tích hợp tiếp theo!`);
-}
-
-// Hàm lưu trữ tiến độ học tập trên trình duyệt (LocalStorage)
-function loadUserProgress() {
-    const saved = localStorage.getItem('edupulse_progress');
-    if (saved) {
-        const progress = JSON.parse(saved);
-        console.log("Đã tải tiến độ học tập đã lưu:", progress);
-    }
-}
-
-/* =========================================================
-   HÀM RENDER VÀ KÍCH HOẠT HIỆU ỨNG ÁNH SÁNG THEO CHUỘT
-   ========================================================= */
-
-// Hàm hiển thị danh sách bài học (Units) lên màn hình
-function renderUnitList() {
-    const container = document.getElementById('unit-list-container');
-    if (!container || !currentUnitData) return;
+    if (!container || !currentUnitData || !currentUnitData.units) return;
 
     container.innerHTML = '';
 
@@ -138,43 +116,39 @@ function renderUnitList() {
         container.innerHTML += cardHTML;
     });
 
-    // KÍCH HOẠT HIỆU ỨNG CHUỘT NGAY SAU KHI RENDER XONG CARD
     initMouseLightEffect();
 }
 
-// Xử lý tọa độ con chuột để tạo hiệu ứng ánh sáng quét theo con trỏ
+function openUnitDetail(unitId) {
+    alert(`Đang mở bài học có mã: ${unitId}\nTính năng học Flashcard và Trắc nghiệm tương tác sẽ được tích hợp tiếp theo!`);
+}
+
+function loadUserProgress() {
+    const saved = localStorage.getItem('edupulse_progress');
+    if (saved) {
+        const progress = JSON.parse(saved);
+        console.log("Đã tải tiến độ học tập đã lưu:", progress);
+    }
+}
+
 function initMouseLightEffect() {
     const cards = document.querySelectorAll('#unit-list-container > div');
-    
     cards.forEach(card => {
         card.addEventListener('mousemove', e => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-            
             card.style.setProperty('--mouse-x', `${x}px`);
             card.style.setProperty('--mouse-y', `${y}px`);
         });
     });
 }
 
+
 /* =========================================================
-   HỆ THỐNG QUẢN LÝ PLAYLIST, THU NHỎ VÀ KÉO THẢ WIDGET NHẠC
-       XÁC THỰC GOOGLE, QUẢN LÝ PLAYLIST & NÚT XÓA
+   3. XÁC THỰC GOOGLE (GIS) & QUẢN LÝ TÀI KHOẢN
    ========================================================= */
 
-let playlist = [];
-let currentTrackIndex = -1;
-let isMinimized = false;
-
-// Khởi tạo khi tải trang
-document.addEventListener('DOMContentLoaded', () => {
-    checkLocalUserSession();
-});
-
-let isUserLoggedIn = false;
-
-// Giải mã token trả về từ Google
 function parseJwt(token) {
     var base64Url = token.split('.')[1];
     var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -184,10 +158,8 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 
-// Xử lý khi đăng nhập thành công
 function handleCredentialResponse(response) {
     const responsePayload = parseJwt(response.credential);
-
     const googleUser = {
         name: responsePayload.name,
         email: responsePayload.email,
@@ -196,22 +168,22 @@ function handleCredentialResponse(response) {
 
     localStorage.setItem('edupulse_user', JSON.stringify(googleUser));
     applyLoggedInUI(googleUser);
-    
     alert(`Xin chào ${googleUser.name}! Đã kết nối tài khoản Google thành công.`);
 }
 
-// Áp dụng giao diện khi đã đăng nhập (Biến chữ E thành Avatar)
 function applyLoggedInUI(user) {
     isUserLoggedIn = true;
     const logoLetter = document.getElementById('logo-letter');
     const logoAvatar = document.getElementById('logo-avatar');
     
-    // Gán thông tin vào bảng popup
-    document.getElementById('dropdown-avatar').src = user.avatar;
-    document.getElementById('dropdown-name').textContent = user.name;
-    document.getElementById('dropdown-email').textContent = user.email;
+    const dropAvatar = document.getElementById('dropdown-avatar');
+    const dropName = document.getElementById('dropdown-name');
+    const dropEmail = document.getElementById('dropdown-email');
 
-    // Ẩn chữ E, hiện ảnh đại diện lên ô logo
+    if (dropAvatar) dropAvatar.src = user.avatar;
+    if (dropName) dropName.textContent = user.name;
+    if (dropEmail) dropEmail.textContent = user.email;
+
     if (logoLetter && logoAvatar) {
         logoLetter.classList.add('hidden');
         logoAvatar.classList.remove('hidden');
@@ -219,19 +191,14 @@ function applyLoggedInUI(user) {
     }
 }
 
-// Xử lý khi người dùng bấm vào ô logo chữ E / Avatar
 function handleLogoClick() {
     if (!isUserLoggedIn) {
-        // Nếu chưa đăng nhập: Kích hoạt hiển thị bảng popup đăng nhập chính thức của Google
-        // Google Identity Services tự sinh nút ẩn, ta có thể gọi prompt
         google.accounts.id.prompt((notification) => {
             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                // Trường hợp trình duyệt chặn popup prompt, hướng dẫn click hoặc hiện thông báo
                 console.log("Cần bấm vào khung đăng nhập Google.");
             }
         });
     } else {
-        // Nếu đã đăng nhập: Bấm vào sẽ bật/tắt bảng menu thông tin & đăng xuất
         const dropdown = document.getElementById('user-dropdown-menu');
         if (dropdown) {
             dropdown.classList.toggle('hidden');
@@ -239,7 +206,6 @@ function handleLogoClick() {
     }
 }
 
-// Đóng menu khi click ra ngoài
 window.addEventListener('click', function(e) {
     const trigger = document.getElementById('profile-trigger');
     const dropdown = document.getElementById('user-dropdown-menu');
@@ -248,29 +214,16 @@ window.addEventListener('click', function(e) {
     }
 });
 
-// Kiểm tra phiên đăng nhập khi tải lại trang
-document.addEventListener('DOMContentLoaded', () => {
-    const savedUser = localStorage.getItem('edupulse_user');
-    if (savedUser) {
-        applyLoggedInUI(JSON.parse(savedUser));
-    }
-    
-    // Khởi tạo Google Identity Services
-    if (typeof google !== 'undefined') {
-        google.accounts.id.initialize({
-            client_id: "538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com",
-            callback: handleCredentialResponse
-        });
-    }
-});
-
-// Đăng xuất tài khoản
 function logoutGoogle() {
     localStorage.removeItem('edupulse_user');
-    location.reload(); // Tải lại trang để reset
+    location.reload();
 }
 
-// 2. Xử lý tải lên danh sách bài hát từ máy tính
+
+/* =========================================================
+   4. HỆ THỐNG PHÁT NHẠC (MUSIC PLAYER) & LƯU TRỮ PLAYLIST
+   ========================================================= */
+
 function handleMusicUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -278,12 +231,11 @@ function handleMusicUpload(event) {
     Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const base64Audio = e.target.result; // Chuyển file thành chuỗi để lưu trữ vĩnh viễn
-            const newTrack = {
+            const base64Audio = e.target.result;
+            playlist.push({
                 name: file.name,
                 url: base64Audio
-            };
-            playlist.push(newTrack);
+            });
             savePlaylistToStorage();
             renderPlaylist();
 
@@ -295,24 +247,21 @@ function handleMusicUpload(event) {
     });
 }
 
-// Lưu danh sách phát vào localStorage
 function savePlaylistToStorage() {
     try {
         localStorage.setItem('edupulse_playlist', JSON.stringify(playlist));
     } catch (err) {
-        console.log("Dung lượng file nhạc quá lớn để lưu vào bộ nhớ trình duyệt:", err);
+        console.log("Dung lượng file nhạc quá lớn:", err);
     }
 }
 
-// Khôi phục danh sách phát khi tải lại trang
 function loadPlaylistFromStorage() {
     const saved = localStorage.getItem('edupulse_playlist');
     if (saved) {
         try {
             playlist = JSON.parse(saved);
             renderPlaylist();
-            if (playlist.length > 0 && currentTrackIndex === -1) {
-                // Chuẩn bị sẵn bài đầu tiên nhưng không tự động phát gắt gao để tránh lỗi chính sách Audio của trình duyệt
+            if (playlist.length > 0) {
                 currentTrackIndex = 0;
                 const trackTitle = document.getElementById('track-title');
                 const statusEl = document.getElementById('track-status');
@@ -325,7 +274,6 @@ function loadPlaylistFromStorage() {
     }
 }
 
-// Hiển thị danh sách phát kèm nút xóa
 function renderPlaylist() {
     const container = document.getElementById('playlist-container');
     const countEl = document.getElementById('playlist-count');
@@ -360,7 +308,6 @@ function renderPlaylist() {
     });
 }
 
-// Xóa bài hát và cập nhật lại bộ nhớ
 function removeTrack(event, index) {
     event.stopPropagation();
     if (confirm(`Bạn có chắc chắn muốn xóa bài hát "${playlist[index].name}" không?`)) {
@@ -368,8 +315,10 @@ function removeTrack(event, index) {
             const audio = document.getElementById('bg-audio');
             if (audio) { audio.pause(); audio.src = ''; }
             currentTrackIndex = -1;
-            document.getElementById('track-title').textContent = 'Chưa có bài hát nào';
-            document.getElementById('track-status').textContent = 'Đã xóa bài hiện tại';
+            const trackTitle = document.getElementById('track-title');
+            const statusEl = document.getElementById('track-status');
+            if (trackTitle) trackTitle.textContent = 'Chưa có bài hát nào';
+            if (statusEl) statusEl.textContent = 'Đã xóa bài hiện tại';
         } else if (index < currentTrackIndex) {
             currentTrackIndex--;
         }
@@ -380,7 +329,6 @@ function removeTrack(event, index) {
     }
 }
 
-// Điều khiển phát nhạc
 function playTrack(index) {
     if (index < 0 || index >= playlist.length) return;
     currentTrackIndex = index;
@@ -459,26 +407,7 @@ function toggleMinimizeWidget() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Kiểm tra đăng nhập cũ
-    const savedUser = localStorage.getItem('edupulse_user');
-    if (savedUser) {
-        applyLoggedInUI(JSON.parse(savedUser));
-    }
-    
-    // Tải danh sách nhạc đã lưu trữ
-    loadPlaylistFromStorage();
-
-    // Khởi tạo Google Identity Services
-    if (typeof google !== 'undefined' && google.accounts) {
-        google.accounts.id.initialize({
-            client_id: "538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com",
-            callback: handleCredentialResponse
-        });
-    }
-   
-// 7. Kéo thả widget tự do
-document.addEventListener('DOMContentLoaded', () => {
+function initMusicWidgetDrag() {
     const widget = document.getElementById('music-player-widget');
     const header = document.getElementById('widget-header');
     if (!widget || !header) return;
@@ -517,4 +446,4 @@ document.addEventListener('DOMContentLoaded', () => {
             widget.style.transition = 'all 0.3s ease';
         }
     });
-});
+}
