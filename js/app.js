@@ -163,10 +163,6 @@ function initMouseLightEffect() {
        XÁC THỰC GOOGLE, QUẢN LÝ PLAYLIST & NÚT XÓA
    ========================================================= */
 
-/* =========================================================
-   HỆ THỐNG XÁC THỰC GOOGLE, QUẢN LÝ PLAYLIST & NÚT XÓA
-   ========================================================= */
-
 let playlist = [];
 let currentTrackIndex = -1;
 let isMinimized = false;
@@ -176,17 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
     checkLocalUserSession();
 });
 
-// 1. Đăng nhập Google (Mô phỏng đồng bộ Cloud chuẩn KHKT)
-function loginWithGoogle() {
-    const simulatedUser = {
-        name: "Hoàng Minh Quân",
-        email: "minhquan.thptdienchau2@gmail.com",
-        avatar: "https://ui-avatars.com/api/?name=Hoang+Minh+Quan&background=4f46e5&color=fff"
+// Hàm giải mã JWT token trả về từ Google
+function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+        return '%' + ('--' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+
+// Nhận dữ liệu tự động khi người dùng đăng nhập Google thành công
+function handleCredentialResponse(response) {
+    const responsePayload = parseJwt(response.credential);
+
+    const googleUser = {
+        name: responsePayload.name,
+        email: responsePayload.email,
+        avatar: responsePayload.picture
     };
 
-    localStorage.setItem('edupulse_user', JSON.stringify(simulatedUser));
-    updateAuthUI(simulatedUser);
-    alert(`Chào mừng ${simulatedUser.name}! Tài khoản Google đã được liên kết và đồng bộ Cloud thành công.`);
+    // Lưu phiên đăng nhập thật vào localStorage để đồng bộ Cloud
+    localStorage.setItem('edupulse_user', JSON.stringify(googleUser));
+    updateAuthUI(googleUser);
+    
+    alert(`Xin chào ${googleUser.name}! Đã đăng nhập thành công bằng tài khoản Google chính thức.`);
 }
 
 function checkLocalUserSession() {
