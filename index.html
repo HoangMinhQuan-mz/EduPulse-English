@@ -20,13 +20,38 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
     <header class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
-                                          E
+<div class="flex items-center gap-3">
+                <!-- Thẻ chứa ô Logo "E" / Avatar tích hợp nút tài khoản -->
+                <div class="relative">
+                    <div id="profile-trigger" onclick="handleLogoClick()" class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center shadow-md cursor-pointer hover:bg-indigo-700 transition overflow-hidden border-2 border-indigo-100 select-none" title="Tài khoản cá nhân & Đăng nhập">
+                        <span id="logo-letter">E</span>
+                        <img id="logo-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+                    </div>
+
+                    <!-- Bảng Popup thông tin chi tiết & Đăng xuất -->
+                    <div id="user-dropdown-menu" class="hidden absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
+                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                            <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm">
+                            <div class="min-w-0 flex-1">
+                                <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
+                                <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
+                            </div>
+                        </div>
+                        <div class="pt-3 flex flex-col gap-2">
+                            <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
+                                <span>Trạng thái Cloud</span>
+                                <span class="text-emerald-600 font-bold">Đã đồng bộ</span>
+                            </div>
+                            <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
+                            </button>
+                        </div>
+                    </div>
                 </div>
+
                 <div>
-                    <h1 class="font-bold text-lg text-indigo-900 leading-none">EduPulse English</h1>
-                    <p class="text-xs text-slate-500 font-medium">Nền tảng học Tiếng Anh THPT</p>
+                    <h1 class="text-base font-bold text-slate-800 leading-tight">EduPulse English</h1>
+                    <p class="text-[11px] text-slate-500">Nền tảng học Tiếng Anh THPT</p>
                 </div>
             </div>
 
@@ -56,38 +81,6 @@
     </div>
     <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
 
-    <!-- Khung thông tin tài khoản (Ban đầu hiển thị đầy đủ, sau 10s sẽ thu gọn thành avatar tròn) -->
-    <div id="user-profile" class="hidden relative">
-        <!-- Nút/Avatar chính (Khi thu gọn chỉ còn hình tròn này) -->
-        <div onclick="toggleUserMenu()" class="flex items-center gap-2.5 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm cursor-pointer hover:border-indigo-300 transition select-none">
-            <img id="user-avatar" src="" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
-            <div id="user-text-info" class="text-left">
-                <h5 id="user-name" class="text-xs font-bold text-slate-800 leading-tight"></h5>
-                <span class="text-[9px] text-emerald-600 font-medium">Đã đồng bộ Cloud</span>
-            </div>
-        </div>
-
-        <!-- Bảng Popup thông tin chi tiết & Đăng xuất (Hiện ra khi bấm vào avatar thu gọn) -->
-       <div id="user-dropdown-menu" class="hidden absolute left-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50">
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm">
-                <div class="min-w-0 flex-1">
-                    <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
-                    <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
-                </div>
-            </div>
-            <div class="pt-3 flex flex-col gap-2">
-                <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
-                    <span>Trạng thái Cloud</span>
-                    <span class="text-emerald-600 font-bold">Đã kết nối</span>
-                </div>
-                <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
     
     </header>
 
