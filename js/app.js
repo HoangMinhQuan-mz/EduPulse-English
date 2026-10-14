@@ -447,3 +447,21 @@ function initMusicWidgetDrag() {
         }
     });
 }
+
+// Hàm Thu gọn / Mở rộng toàn bộ thanh Header
+function toggleHeader() {
+    const header = document.getElementById('main-header');
+    const expandBtn = document.getElementById('btn-expand-header');
+
+    if (!header || !expandBtn) return;
+
+    if (header.classList.contains('-translate-y-full')) {
+        // Hiện lại Header
+        header.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
+        expandBtn.classList.add('hidden');
+    } else {
+        // Thu gọn rút ẩn Header lên trên
+        header.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+        expandBtn.classList.remove('hidden');
+    }
+}
