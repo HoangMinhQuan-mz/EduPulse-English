@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Khởi tạo Google Identity Services
     if (typeof google !== 'undefined') {
         google.accounts.id.initialize({
-            client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Thay bằng ID của bạn
+            client_id: "538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com",
             callback: handleCredentialResponse
         });
     }
