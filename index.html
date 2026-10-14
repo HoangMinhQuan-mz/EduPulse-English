@@ -22,7 +22,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
-          
+                                          E
                 </div>
                 <div>
                     <h1 class="font-bold text-lg text-indigo-900 leading-none">EduPulse English</h1>
@@ -47,15 +47,14 @@
 <!-- Thư viện đăng nhập Google -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    <div id="auth-container" class="flex items-center gap-3">
-        <!-- Cấu hình nút đăng nhập Google -->
-        <div id="g_id_onload"
-             data-client_id="538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com"
-             data-callback="handleCredentialResponse"
-             data-auto_prompt="false">
-        </div>
-        <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
+   <div id="auth-container" class="flex items-center gap-3">
+    <!-- Nút đăng nhập Google chính thức -->
+    <div id="g_id_onload"
+         data-client_id="538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com"
+         data-callback="handleCredentialResponse"
+         data-auto_prompt="false">
     </div>
+    <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="sign_in_with" data-size="large"></div>
 
     <!-- Khung hiển thị sau khi đăng nhập thành công (ẩn đi ban đầu) -->
     <div id="user-profile" class="hidden flex items-center gap-2.5 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">
@@ -69,6 +68,7 @@
         </button>
     </div>
 </div>
+    
     </header>
 
     <!-- Main Content Area -->
