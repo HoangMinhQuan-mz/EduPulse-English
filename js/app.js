@@ -275,29 +275,63 @@ function handleMusicUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const musicURL = URL.createObjectURL(file);
-        playlist.push({
-            name: file.name,
-            url: musicURL
-        });
-    }
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Audio = e.target.result; // Chuyển file thành chuỗi để lưu trữ vĩnh viễn
+            const newTrack = {
+                name: file.name,
+                url: base64Audio
+            };
+            playlist.push(newTrack);
+            savePlaylistToStorage();
+            renderPlaylist();
 
-    renderPlaylist();
+            if (currentTrackIndex === -1 && playlist.length > 0) {
+                playTrack(0);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
 
-    if (currentTrackIndex === -1 && playlist.length > 0) {
-        playTrack(0);
+// Lưu danh sách phát vào localStorage
+function savePlaylistToStorage() {
+    try {
+        localStorage.setItem('edupulse_playlist', JSON.stringify(playlist));
+    } catch (err) {
+        console.log("Dung lượng file nhạc quá lớn để lưu vào bộ nhớ trình duyệt:", err);
     }
 }
 
-// 3. Hiển thị danh sách phát kèm nút XÓA (Thùng rác)
+// Khôi phục danh sách phát khi tải lại trang
+function loadPlaylistFromStorage() {
+    const saved = localStorage.getItem('edupulse_playlist');
+    if (saved) {
+        try {
+            playlist = JSON.parse(saved);
+            renderPlaylist();
+            if (playlist.length > 0 && currentTrackIndex === -1) {
+                // Chuẩn bị sẵn bài đầu tiên nhưng không tự động phát gắt gao để tránh lỗi chính sách Audio của trình duyệt
+                currentTrackIndex = 0;
+                const trackTitle = document.getElementById('track-title');
+                const statusEl = document.getElementById('track-status');
+                if (trackTitle) trackTitle.textContent = playlist[0].name;
+                if (statusEl) statusEl.textContent = `Đã khôi phục ${playlist.length} bài hát`;
+            }
+        } catch (e) {
+            console.log("Lỗi tải playlist:", e);
+        }
+    }
+}
+
+// Hiển thị danh sách phát kèm nút xóa
 function renderPlaylist() {
     const container = document.getElementById('playlist-container');
     const countEl = document.getElementById('playlist-count');
     if (!container) return;
 
-    countEl.textContent = playlist.length;
+    if (countEl) countEl.textContent = playlist.length;
 
     if (playlist.length === 0) {
         container.innerHTML = `<div class="text-center py-4 text-slate-400 italic text-[11px]">Chưa có bài hát trong danh sách</div>`;
@@ -316,7 +350,6 @@ function renderPlaylist() {
                 </div>
                 <div class="flex items-center gap-2">
                     ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">Đang phát</span>' : ''}
-                    <!-- Nút Xóa bài hát (Thùng rác) -->
                     <button onclick="removeTrack(event, ${index})" title="Xóa bài này" class="text-slate-400 hover:text-rose-600 p-1 transition">
                         <i class="fa-solid fa-trash-can text-[11px]"></i>
                     </button>
@@ -327,15 +360,13 @@ function renderPlaylist() {
     });
 }
 
-// 4. Xóa bài hát khỏi danh sách
+// Xóa bài hát và cập nhật lại bộ nhớ
 function removeTrack(event, index) {
-    event.stopPropagation(); // Ngăn không cho sự kiện click nhầm vào việc phát nhạc
-
+    event.stopPropagation();
     if (confirm(`Bạn có chắc chắn muốn xóa bài hát "${playlist[index].name}" không?`)) {
         if (index === currentTrackIndex) {
             const audio = document.getElementById('bg-audio');
-            audio.pause();
-            audio.src = '';
+            if (audio) { audio.pause(); audio.src = ''; }
             currentTrackIndex = -1;
             document.getElementById('track-title').textContent = 'Chưa có bài hát nào';
             document.getElementById('track-status').textContent = 'Đã xóa bài hiện tại';
@@ -344,11 +375,12 @@ function removeTrack(event, index) {
         }
 
         playlist.splice(index, 1);
+        savePlaylistToStorage();
         renderPlaylist();
     }
 }
 
-// 5. Các hàm điều khiển phát nhạc (Play, Pause, Next, Prev)
+// Điều khiển phát nhạc
 function playTrack(index) {
     if (index < 0 || index >= playlist.length) return;
     currentTrackIndex = index;
@@ -359,15 +391,15 @@ function playTrack(index) {
     const statusEl = document.getElementById('track-status');
     const playBtn = document.getElementById('play-btn');
 
-    audio.src = track.url;
-    trackTitle.textContent = track.name;
-    statusEl.textContent = `Bài ${index + 1} / ${playlist.length}`;
+    if (audio) {
+        audio.src = track.url;
+        if (trackTitle) trackTitle.textContent = track.name;
+        if (statusEl) statusEl.textContent = `Bài ${index + 1} / ${playlist.length}`;
 
-    audio.play().then(() => {
-        playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
-    }).catch(err => {
-        console.log("Lỗi phát nhạc:", err);
-    });
+        audio.play().then(() => {
+            if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+        }).catch(err => console.log("Lỗi phát nhạc:", err));
+    }
 
     renderPlaylist();
 }
@@ -377,7 +409,7 @@ function togglePlayMusic() {
     const playBtn = document.getElementById('play-btn');
 
     if (playlist.length === 0) {
-        alert("Vui lòng bấm 'Thêm nhạc' để chọn các file MP3 từ máy tính trước nhé!");
+        alert("Vui lòng bấm 'Thêm nhạc' để chọn các file MP3 nhé!");
         return;
     }
 
@@ -388,11 +420,11 @@ function togglePlayMusic() {
 
     if (audio.paused) {
         audio.play().then(() => {
-            playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+            if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
         });
     } else {
         audio.pause();
-        playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+        if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
     }
 }
 
@@ -410,7 +442,6 @@ function playPreviousTrack() {
     playTrack(prevIndex);
 }
 
-// 6. Thu nhỏ / Mở rộng widget
 function toggleMinimizeWidget() {
     const body = document.getElementById('widget-body');
     const minimizeBtn = document.getElementById('minimize-btn');
@@ -418,16 +449,34 @@ function toggleMinimizeWidget() {
 
     isMinimized = !isMinimized;
     if (isMinimized) {
-        body.classList.add('hidden');
-        minimizeBtn.innerHTML = '<i class="fa-solid fa-window-maximize text-xs"></i>';
-        widget.style.width = '240px';
+        if (body) body.classList.add('hidden');
+        if (minimizeBtn) minimizeBtn.innerHTML = '<i class="fa-solid fa-window-maximize text-xs"></i>';
+        if (widget) widget.style.width = '240px';
     } else {
-        body.classList.remove('hidden');
-        minimizeBtn.innerHTML = '<i class="fa-solid fa-window-minimize text-xs"></i>';
-        widget.style.width = '320px';
+        if (body) body.classList.remove('hidden');
+        if (minimizeBtn) minimizeBtn.innerHTML = '<i class="fa-solid fa-window-minimize text-xs"></i>';
+        if (widget) widget.style.width = '320px';
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Kiểm tra đăng nhập cũ
+    const savedUser = localStorage.getItem('edupulse_user');
+    if (savedUser) {
+        applyLoggedInUI(JSON.parse(savedUser));
+    }
+    
+    // Tải danh sách nhạc đã lưu trữ
+    loadPlaylistFromStorage();
+
+    // Khởi tạo Google Identity Services
+    if (typeof google !== 'undefined' && google.accounts) {
+        google.accounts.id.initialize({
+            client_id: "538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+        });
+    }
+   
 // 7. Kéo thả widget tự do
 document.addEventListener('DOMContentLoaded', () => {
     const widget = document.getElementById('music-player-widget');
