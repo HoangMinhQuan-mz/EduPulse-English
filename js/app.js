@@ -182,7 +182,7 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 
-// Nhận dữ liệu tự động khi người dùng đăng nhập Google thành công
+// Xử lý khi đăng nhập Google thành công
 function handleCredentialResponse(response) {
     const responsePayload = parseJwt(response.credential);
 
@@ -192,46 +192,43 @@ function handleCredentialResponse(response) {
         avatar: responsePayload.picture
     };
 
-    // Lưu phiên đăng nhập thật vào localStorage để đồng bộ Cloud
+    // Lưu vào localStorage để ghi nhớ phiên đăng nhập
     localStorage.setItem('edupulse_user', JSON.stringify(googleUser));
-    updateAuthUI(googleUser);
     
-    alert(`Xin chào ${googleUser.name}! Đã đăng nhập thành công bằng tài khoản Google chính thức.`);
+    // Cập nhật giao diện hiển thị thông tin thật
+    showLoggedInUI(googleUser);
+    
+    alert(`Xin chào ${googleUser.name}! Đăng nhập và đồng bộ Cloud thành công.`);
 }
 
-function checkLocalUserSession() {
-    const savedUser = localStorage.getItem('edupulse_user');
-    if (savedUser) {
-        updateAuthUI(JSON.parse(savedUser));
-    }
-}
-
-function updateAuthUI(user) {
-    const loginBtn = document.getElementById('google-login-btn');
+// Hiển thị thông tin người dùng và ẩn nút đăng nhập
+function showLoggedInUI(user) {
+    const googleSigninDiv = document.querySelector('.g_id_signin');
     const profileDiv = document.getElementById('user-profile');
     const avatarImg = document.getElementById('user-avatar');
     const nameEl = document.getElementById('user-name');
 
-    if (loginBtn && profileDiv) {
-        loginBtn.classList.add('hidden');
+    if (googleSigninDiv) googleSigninDiv.classList.add('hidden');
+    if (profileDiv) {
         profileDiv.classList.remove('hidden');
         avatarImg.src = user.avatar;
         nameEl.textContent = user.name;
     }
 }
 
+// Kiểm tra khi tải lại trang xem đã đăng nhập chưa
+document.addEventListener('DOMContentLoaded', () => {
+    const savedUser = localStorage.getItem('edupulse_user');
+    if (savedUser) {
+        showLoggedInUI(JSON.parse(savedUser));
+    }
+});
+
+// Đăng xuất tài khoản
 function logoutGoogle() {
     localStorage.removeItem('edupulse_user');
-    const loginBtn = document.getElementById('google-login-btn');
-    const profileDiv = document.getElementById('user-profile');
-
-    if (loginBtn && profileDiv) {
-        loginBtn.classList.remove('hidden');
-        profileDiv.classList.add('hidden');
-    }
-    alert("Đã đăng xuất tài khoản!");
+    location.reload(); // Tải lại trang để reset về trạng thái ban đầu
 }
-
 // 2. Xử lý tải lên danh sách bài hát từ máy tính
 function handleMusicUpload(event) {
     const files = event.target.files;
