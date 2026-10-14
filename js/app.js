@@ -160,13 +160,69 @@ function initMouseLightEffect() {
 
 /* =========================================================
    HỆ THỐNG QUẢN LÝ PLAYLIST, THU NHỎ VÀ KÉO THẢ WIDGET NHẠC
+       XÁC THỰC GOOGLE, QUẢN LÝ PLAYLIST & NÚT XÓA
+   ========================================================= */
+
+/* =========================================================
+   HỆ THỐNG XÁC THỰC GOOGLE, QUẢN LÝ PLAYLIST & NÚT XÓA
    ========================================================= */
 
 let playlist = [];
 let currentTrackIndex = -1;
 let isMinimized = false;
 
-// 1. Xử lý tải lên danh sách bài hát từ máy tính
+// Khởi tạo khi tải trang
+document.addEventListener('DOMContentLoaded', () => {
+    checkLocalUserSession();
+});
+
+// 1. Đăng nhập Google (Mô phỏng đồng bộ Cloud chuẩn KHKT)
+function loginWithGoogle() {
+    const simulatedUser = {
+        name: "Hoàng Minh Quân",
+        email: "minhquan.thptdienchau2@gmail.com",
+        avatar: "https://ui-avatars.com/api/?name=Hoang+Minh+Quan&background=4f46e5&color=fff"
+    };
+
+    localStorage.setItem('edupulse_user', JSON.stringify(simulatedUser));
+    updateAuthUI(simulatedUser);
+    alert(`Chào mừng ${simulatedUser.name}! Tài khoản Google đã được liên kết và đồng bộ Cloud thành công.`);
+}
+
+function checkLocalUserSession() {
+    const savedUser = localStorage.getItem('edupulse_user');
+    if (savedUser) {
+        updateAuthUI(JSON.parse(savedUser));
+    }
+}
+
+function updateAuthUI(user) {
+    const loginBtn = document.getElementById('google-login-btn');
+    const profileDiv = document.getElementById('user-profile');
+    const avatarImg = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+
+    if (loginBtn && profileDiv) {
+        loginBtn.classList.add('hidden');
+        profileDiv.classList.remove('hidden');
+        avatarImg.src = user.avatar;
+        nameEl.textContent = user.name;
+    }
+}
+
+function logoutGoogle() {
+    localStorage.removeItem('edupulse_user');
+    const loginBtn = document.getElementById('google-login-btn');
+    const profileDiv = document.getElementById('user-profile');
+
+    if (loginBtn && profileDiv) {
+        loginBtn.classList.remove('hidden');
+        profileDiv.classList.add('hidden');
+    }
+    alert("Đã đăng xuất tài khoản!");
+}
+
+// 2. Xử lý tải lên danh sách bài hát từ máy tính
 function handleMusicUpload(event) {
     const files = event.target.files;
     if (!files || files.length === 0) return;
@@ -182,37 +238,69 @@ function handleMusicUpload(event) {
 
     renderPlaylist();
 
-    // Nếu trước đó chưa phát bài nào thì tự động phát bài đầu tiên vừa tải
     if (currentTrackIndex === -1 && playlist.length > 0) {
         playTrack(0);
     }
 }
 
-// 2. Hiển thị danh sách phát ra giao diện
+// 3. Hiển thị danh sách phát kèm nút XÓA (Thùng rác)
 function renderPlaylist() {
     const container = document.getElementById('playlist-container');
     const countEl = document.getElementById('playlist-count');
     if (!container) return;
 
     countEl.textContent = playlist.length;
+
+    if (playlist.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-slate-400 italic text-[11px]">Chưa có bài hát trong danh sách</div>`;
+        return;
+    }
+
     container.innerHTML = '';
 
     playlist.forEach((track, index) => {
         const isActive = index === currentTrackIndex;
         const itemHTML = `
-            <div onclick="playTrack(${index})" class="flex items-center justify-between p-2 rounded-lg cursor-pointer transition ${isActive ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100' : 'hover:bg-slate-100 text-slate-700'}">
+            <div onclick="playTrack(${index})" class="group flex items-center justify-between p-2 rounded-lg cursor-pointer transition ${isActive ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100' : 'hover:bg-slate-100 text-slate-700'}">
                 <div class="flex items-center gap-2 truncate flex-1">
                     <i class="fa-solid ${isActive ? 'fa-volume-high text-indigo-600' : 'fa-music text-slate-400'} text-[10px]"></i>
                     <span class="truncate text-xs">${track.name}</span>
                 </div>
-                ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded ml-2">Đang phát</span>' : ''}
+                <div class="flex items-center gap-2">
+                    ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">Đang phát</span>' : ''}
+                    <!-- Nút Xóa bài hát (Thùng rác) -->
+                    <button onclick="removeTrack(event, ${index})" title="Xóa bài này" class="text-slate-400 hover:text-rose-600 p-1 transition">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                    </button>
+                </div>
             </div>
         `;
         container.innerHTML += itemHTML;
     });
 }
 
-// 3. Phát bài hát theo chỉ số (index) trong playlist
+// 4. Xóa bài hát khỏi danh sách
+function removeTrack(event, index) {
+    event.stopPropagation(); // Ngăn không cho sự kiện click nhầm vào việc phát nhạc
+
+    if (confirm(`Bạn có chắc chắn muốn xóa bài hát "${playlist[index].name}" không?`)) {
+        if (index === currentTrackIndex) {
+            const audio = document.getElementById('bg-audio');
+            audio.pause();
+            audio.src = '';
+            currentTrackIndex = -1;
+            document.getElementById('track-title').textContent = 'Chưa có bài hát nào';
+            document.getElementById('track-status').textContent = 'Đã xóa bài hiện tại';
+        } else if (index < currentTrackIndex) {
+            currentTrackIndex--;
+        }
+
+        playlist.splice(index, 1);
+        renderPlaylist();
+    }
+}
+
+// 5. Các hàm điều khiển phát nhạc (Play, Pause, Next, Prev)
 function playTrack(index) {
     if (index < 0 || index >= playlist.length) return;
     currentTrackIndex = index;
@@ -236,7 +324,6 @@ function playTrack(index) {
     renderPlaylist();
 }
 
-// 4. Bật / Tạm dừng phát nhạc
 function togglePlayMusic() {
     const audio = document.getElementById('bg-audio');
     const playBtn = document.getElementById('play-btn');
@@ -261,22 +348,21 @@ function togglePlayMusic() {
     }
 }
 
-// 5. Chuyển bài trước / Bài tiếp theo
 function playNextTrack() {
     if (playlist.length === 0) return;
     let nextIndex = currentTrackIndex + 1;
-    if (nextIndex >= playlist.length) nextIndex = 0; // Quay về bài đầu tiên
+    if (nextIndex >= playlist.length) nextIndex = 0;
     playTrack(nextIndex);
 }
 
 function playPreviousTrack() {
     if (playlist.length === 0) return;
     let prevIndex = currentTrackIndex - 1;
-    if (prevIndex < 0) prevIndex = playlist.length - 1; // Nhảy về bài cuối
+    if (prevIndex < 0) prevIndex = playlist.length - 1;
     playTrack(prevIndex);
 }
 
-// 6. Tính năng Thu nhỏ / Mở rộng widget
+// 6. Thu nhỏ / Mở rộng widget
 function toggleMinimizeWidget() {
     const body = document.getElementById('widget-body');
     const minimizeBtn = document.getElementById('minimize-btn');
@@ -294,10 +380,11 @@ function toggleMinimizeWidget() {
     }
 }
 
-// 7. Tính năng Kéo thả tự do (Draggable Widget)
+// 7. Kéo thả widget tự do
 document.addEventListener('DOMContentLoaded', () => {
     const widget = document.getElementById('music-player-widget');
     const header = document.getElementById('widget-header');
+    if (!widget || !header) return;
 
     let isDragging = false;
     let offsetX, offsetY;
@@ -306,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = true;
         offsetX = e.clientX - widget.getBoundingClientRect().left;
         offsetY = e.clientY - widget.getBoundingClientRect().top;
-        widget.style.transition = 'none'; // Tắt hiệu ứng mượt khi đang kéo để chuột nhạy tuyệt đối
+        widget.style.transition = 'none';
     });
 
     document.addEventListener('mousemove', (e) => {
@@ -315,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let x = e.clientX - offsetX;
         let y = e.clientY - offsetY;
 
-        // Giới hạn không cho widget kéo ra ngoài màn hình
         const maxX = window.innerWidth - widget.offsetWidth;
         const maxY = window.innerHeight - widget.offsetHeight;
 
@@ -334,127 +420,4 @@ document.addEventListener('DOMContentLoaded', () => {
             widget.style.transition = 'all 0.3s ease';
         }
     });
-});
-
-/* HỆ THỐNG XÁC THỰC GOOGLE & QUẢN LÝ LƯU TRỮ NHẠC CÁ NHÂN */
-
-// Khởi tạo trạng thái người dùng khi tải trang
-document.addEventListener('DOMContentLoaded', () => {
-    checkLocalUserSession();
-    loadSavedMusicPlaylist();
-});
-
-// Giả lập/Xử lý Đăng nhập Google 
-function loginWithGoogle() {
-    // Demo xác thực tài khoản Google 
-    const simulatedUser = {
-        name: "Hoàng Minh Quân",
-        email: "minhquan.thptdienchau2@gmail.com",
-        avatar: "https://ui-avatars.com/api/?name=Hoang+Minh+Quan&background=4f46e5&color=fff"
-    };
-
-    // Lưu vào localStorage để ghi nhớ phiên đăng nhập
-    localStorage.setItem('edupulse_user', JSON.stringify(simulatedUser));
-    updateAuthUI(simulatedUser);
-    alert(`Chào mừng ${simulatedUser.name} đã đăng nhập thành công! Tiến trình học tập và kho nhạc đã được liên kết với tài khoản.`);
-}
-
-// Kiểm tra phiên đăng nhập lưu trước đó
-function checkLocalUserSession() {
-    const savedUser = localStorage.getItem('edupulse_user');
-    if (savedUser) {
-        updateAuthUI(JSON.parse(savedUser));
-    }
-}
-
-// Cập nhật giao diện khi đã đăng nhập
-function updateAuthUI(user) {
-    const loginBtn = document.getElementById('google-login-btn');
-    const profileDiv = document.getElementById('user-profile');
-    const avatarImg = document.getElementById('user-avatar');
-    const nameEl = document.getElementById('user-name');
-
-    if (loginBtn && profileDiv) {
-        loginBtn.classList.add('hidden');
-        profileDiv.classList.remove('hidden');
-        avatarImg.src = user.avatar;
-        nameEl.textContent = user.name;
-    }
-}
-
-// Đăng xuất tài khoản
-function logoutGoogle() {
-    localStorage.removeItem('edupulse_user');
-    const loginBtn = document.getElementById('google-login-btn');
-    const profileDiv = document.getElementById('user-profile');
-
-    if (loginBtn && profileDiv) {
-        loginBtn.classList.remove('hidden');
-        profileDiv.classList.add('hidden');
-    }
-    alert("Đã đăng xuất tài khoản thành công!");
-}
-
-// --- TÍNH NĂNG XÓA VÀ LƯU TRỮ NHẠC CÁ NHÂN ---
-
-// Lưu danh sách nhạc vào localStorage để không bị mất khi F5 trang
-function saveMusicPlaylistToStorage() {
-    // Lưu ý: Lưu URL dạng object URL chỉ tồn tại trong phiên, 
-    // lưu tên bài hát để thông báo người dùng hoặc quản lý danh sách cá nhân
-    const trackNames = playlist.map(t => t.name);
-    localStorage.setItem('edupulse_saved_tracks', JSON.stringify(trackNames));
-}
-
-// Tải lại danh sách nhạc đã lưu
-function loadSavedMusicPlaylist() {
-    const saved = localStorage.getItem('edupulse_saved_tracks');
-    if (saved) {
-        const trackNames = JSON.parse(saved);
-        // Hiển thị thông báo trạng thái kho nhạc cá nhân nếu cần
-    }
-}
-
-// Hàm Xóa một bài hát khỏi danh sách phát
-function removeTrack(event, index) {
-    event.stopPropagation(); // Tránh việc bấm nút xóa mà bị kích hoạt phát nhạc
-    
-    if (confirm(`Bạn có chắc chắn muốn xóa bài hát "${playlist[index].name}" khỏi danh sách không?`)) {
-        // Nếu bài đang xóa là bài đang phát, cần dừng audio trước
-        if (index === currentTrackIndex) {
-            const audio = document.getElementById('bg-audio');
-            audio.pause();
-            audio.src = '';
-            currentTrackIndex = -1;
-            document.getElementById('track-title').textContent = 'Chưa có bài hát nào';
-            document.getElementById('track-status').textContent = 'Đã xóa bài hiện tại';
-        } else if (index < currentTrackIndex) {
-            currentTrackIndex--; // Điều chỉnh lại chỉ số nếu xóa bài ở phía trên
-        }
-
-        // Xóa khỏi mảng playlist
-        playlist.splice(index, 1);
-        renderPlaylist();
-        saveMusicPlaylistToStorage();
-    }
-}
-
-// Cập nhật lại phần hiển thị item trong renderPlaylist()
-playlist.forEach((track, index) => {
-    const isActive = index === currentTrackIndex;
-    const itemHTML = `
-        <div onclick="playTrack(${index})" class="group flex items-center justify-between p-2 rounded-lg cursor-pointer transition ${isActive ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100' : 'hover:bg-slate-100 text-slate-700'}">
-            <div class="flex items-center gap-2 truncate flex-1">
-                <i class="fa-solid ${isActive ? 'fa-volume-high text-indigo-600' : 'fa-music text-slate-400'} text-[10px]"></i>
-                <span class="truncate text-xs">${track.name}</span>
-            </div>
-            <div class="flex items-center gap-2">
-                ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">Đang phát</span>' : ''}
-                <!-- Nút xóa bài hát -->
-                <button onclick="removeTrack(event, ${index})" title="Xóa bài hát này" class="text-slate-400 hover:text-rose-600 p-1 transition opacity-0 group-hover:opacity-100">
-                    <i class="fa-solid fa-trash-can text-[11px]"></i>
-                </button>
-            </div>
-        </div>
-    `;
-    container.innerHTML += itemHTML;
 });
