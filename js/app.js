@@ -182,6 +182,8 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 
+let currentUserData = null;
+
 // Xử lý khi đăng nhập Google thành công
 function handleCredentialResponse(response) {
     const responsePayload = parseJwt(response.credential);
@@ -192,43 +194,97 @@ function handleCredentialResponse(response) {
         avatar: responsePayload.picture
     };
 
-    // Lưu vào localStorage để ghi nhớ phiên đăng nhập
+    currentUserData = googleUser;
     localStorage.setItem('edupulse_user', JSON.stringify(googleUser));
     
-    // Cập nhật giao diện hiển thị thông tin thật
     showLoggedInUI(googleUser);
     
+    // Đặt bộ đếm thời gian: Sau 10 giây sẽ tự động thu gọn khung thông tin thành avatar tròn
+    setTimeout(() => {
+        minimizeUserProfile();
+    }, 10000);
+
     alert(`Xin chào ${googleUser.name}! Đăng nhập và đồng bộ Cloud thành công.`);
 }
 
-// Hiển thị thông tin người dùng và ẩn nút đăng nhập
+// Hiển thị thông tin người dùng ban đầu (đầy đủ)
 function showLoggedInUI(user) {
+    currentUserData = user;
     const googleSigninDiv = document.querySelector('.g_id_signin');
     const profileDiv = document.getElementById('user-profile');
     const avatarImg = document.getElementById('user-avatar');
     const nameEl = document.getElementById('user-name');
+    
+    // Gán dữ liệu cho bảng dropdown
+    document.getElementById('dropdown-avatar').src = user.avatar;
+    document.getElementById('dropdown-name').textContent = user.name;
+    document.getElementById('dropdown-email').textContent = user.email;
 
     if (googleSigninDiv) googleSigninDiv.classList.add('hidden');
     if (profileDiv) {
         profileDiv.classList.remove('hidden');
         avatarImg.src = user.avatar;
         nameEl.textContent = user.name;
+        
+        // Đảm bảo trạng thái ban đầu là mở rộng đầy đủ
+        const textInfo = document.getElementById('user-text-info');
+        textInfo.classList.remove('hidden');
+        profileDiv.firstElementChild.classList.remove('rounded-full', 'p-1.5');
     }
 }
+
+// Hàm tự động thu gọn thành hình tròn chứa avatar sau 10 giây
+function minimizeUserProfile() {
+    const textInfo = document.getElementById('user-text-info');
+    const containerCard = document.querySelector('#user-profile > div:first-child');
+    
+    if (textInfo && !textInfo.classList.contains('hidden')) {
+        textInfo.classList.add('hidden'); // Ẩn tên và dòng chữ đồng bộ
+        containerCard.classList.add('p-1.5', 'rounded-full'); // Thu gọn lại thành khung tròn
+    }
+}
+
+// Bật / Tắt bảng Pop-up khi nhấn vào avatar
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown-menu');
+    const textInfo = document.getElementById('user-text-info');
+    
+    // Nếu đang ở trạng thái thu gọn, bấm vào sẽ mở rộng tên ra hoặc bật menu
+    if (dropdown.classList.contains('hidden')) {
+        dropdown.classList.remove('hidden');
+    } else {
+        dropdown.classList.add('hidden');
+    }
+}
+
+// Đóng menu khi click ra ngoài màn hình
+window.addEventListener('click', function(e) {
+    const profileDiv = document.getElementById('user-profile');
+    const dropdown = document.getElementById('user-dropdown-menu');
+    if (profileDiv && !profileDiv.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
 
 // Kiểm tra khi tải lại trang xem đã đăng nhập chưa
 document.addEventListener('DOMContentLoaded', () => {
     const savedUser = localStorage.getItem('edupulse_user');
     if (savedUser) {
-        showLoggedInUI(JSON.parse(savedUser));
+        const user = JSON.parse(savedUser);
+        showLoggedInUI(user);
+        // Nếu tải lại trang mà đã đăng nhập từ trước thì thu gọn luôn cho gọn gàng
+        setTimeout(() => {
+            minimizeUserProfile();
+        }, 500);
     }
 });
 
 // Đăng xuất tài khoản
 function logoutGoogle() {
     localStorage.removeItem('edupulse_user');
-    location.reload(); // Tải lại trang để reset về trạng thái ban đầu
+    location.reload(); // Tải lại trang
 }
+
 // 2. Xử lý tải lên danh sách bài hát từ máy tính
 function handleMusicUpload(event) {
     const files = event.target.files;
