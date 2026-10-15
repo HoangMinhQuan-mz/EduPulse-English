@@ -1,11 +1,10 @@
 /* =========================================================
    DỰ ÁN KHKT: EDUPULSE ENGLISH
-   Mục đích: Ngân hàng dữ liệu Mẫu Tiếng Anh Khối 12 (Demo KHKT)
+   Mục đích: Ngân hàng dữ liệu Tiếng Anh Khối 12 (Chuẩn GDPT 2018 - Global Success)
    ========================================================= */
 
 const grade12Data = {
-    
-   title: "Khối 12 - Tiếng Anh THPT",
+    title: "Khối 12 - Tiếng Anh THPT",
     description: "Chương trình ôn thi tốt nghiệp THPT và luyện thi Đại học khối D/C03 bám sát SGK Tiếng Anh 12 (Global Success).",
     units: [
         {
@@ -36,20 +35,20 @@ const grade12Data = {
             title: "Unit 2: A Multicultural World",
             description: "Chủ đề mở ra góc nhìn toàn cảnh về sự giao thoa, đa dạng và hội nhập văn hóa trong kỷ nguyên toàn cầu hóa.",
             vocab: [
-                { word: "Well-being", phonetic: "/ˈwel biːɪŋ/", meaning: "Sự khỏe mạnh, hạnh phúc toàn diện" },
-                { word: "Immune system", phonetic: "/ɪˈmjuːn ɪstəm/", meaning: "Hệ miễn dịch" },
-                { word: "Stress management", phonetic: "/stres ˈmænɪdʒmənt/", meaning: "Quản lý căng thẳng" },
-                { word: "Longevity", phonetic: "/lɒnˈdʒevəti/", meaning: "Sự sống lâu, trường thọ" }
+                { word: "Cultural diversity", phonetic: "/ˈkʌltʃərəl daɪˈvɜːsəti/", meaning: "Sự đa dạng văn hóa" },
+                { word: "Integration", phonetic: "/ˌɪntɪˈɡreɪʃn/", meaning: "Sự hội nhập" },
+                { word: "Assimilation", phonetic: "/əˌsɪməˈleɪʃn/", meaning: "Sự đồng hóa văn hóa" },
+                { word: "Preserve", phonetic: "/prɪˈzɜːv/", meaning: "Bảo tồn, giữ gìn" }
             ],
             quiz: [
                 {
-                    question: "A balanced diet rich in vitamins helps strengthen our __________.",
-                    options: ["immune system", "skeleton", "nervous system", "muscles"],
+                    question: "Globalisation encourages international __________ while maintaining local identities.",
+                    options: ["integration", "isolation", "separation", "conflict"],
                     answer: 0
                 },
                 {
-                    question: "Practicing yoga and meditation is an effective way to improve mental __________.",
-                    options: ["well-being", "illness", "sickness", "weakness"],
+                    question: "Schools should celebrate __________ to teach students respect for different traditions.",
+                    options: ["cultural diversity", "uniformity", "sameness", "isolation"],
                     answer: 0
                 }
             ]
@@ -151,20 +150,20 @@ const grade12Data = {
             title: "Unit 7: The World Of Mass Media",
             description: "Chủ đề đi sâu vào vai trò, sức ảnh hưởng và sự tiến hóa mạnh mẽ của truyền thông trong kỷ nguyên số.",
             vocab: [
-                { word: "Personalised", phonetic: "/ˈpɜːsənəlaɪzd/", meaning: "Được cá nhân hóa" },
-                { word: "Adaptive learning", phonetic: "/əˈdaptɪv ˈlɜːnɪŋ/", meaning: "Học tập thích ứng" },
-                { word: "Virtual assistant", phonetic: "/ˈvɜːtʃuəl əˈsɪstənt/", meaning: "Trợ lý ảo" },
-                { word: "Assessment", phonetic: "/əˈsesmənt/", meaning: "Sự đánh giá, kiểm tra" }
+                { word: "Mass media", phonetic: "/mæs ˈmiːdiə/", meaning: "Phương tiện thông tin đại chúng" },
+                { word: "Broadcast", phonetic: "/ˈbrɔːdkɑːst/", meaning: "Phát sóng, phát thanh" },
+                { word: "Social network", phonetic: "/ˈsəʊʃl ˈnetwɜːk/", meaning: "Mạng xã hội" },
+                { word: "Sensational", phonetic: "/senˈseɪʃənl/", meaning: "Gây giật gân, gây chú ý lớn" }
             ],
             quiz: [
                 {
-                    question: "AI-powered tools provide __________ feedback to help students improve their weak points.",
-                    options: ["personalised", "general", "delayed", "useless"],
+                    question: "Television, radio, and newspapers are traditional forms of __________.",
+                    options: ["mass media", "social media", "private communication", "telecommunications"],
                     answer: 0
                 },
                 {
-                    question: "Continuous __________ throughout the semester helps track student progress accurately.",
-                    options: ["assessment", "entertainment", "relaxation", "absence"],
+                    question: "Some newspapers publish __________ headlines just to attract more readers.",
+                    options: ["sensational", "accurate", "objective", "informative"],
                     answer: 0
                 }
             ]
@@ -172,7 +171,53 @@ const grade12Data = {
         {
             id: "g12-u8",
             title: "Unit 8: Wildlife Conservation",
-            description: "sự suy giảm đa dạng sinh học và nguy cơ tuyệt chủng của các loài động thực vật hoang dã.",
+            description: "Chủ đề về sự suy giảm đa dạng sinh học và nguy cơ tuyệt chủng của các loài động thực vật hoang dã.",
+            vocab: [
+                { word: "Endangered species", phonetic: "/ɪnˈdeɪndʒəd ˈspiːʃiːz/", meaning: "Các loài có nguy cơ tuyệt chủng" },
+                { word: "Poaching", phonetic: "/ˈpəʊtʃɪŋ/", meaning: "Săn bắt trộm động vật" },
+                { word: "Habitat destruction", phonetic: "/ˈhæbɪtæt dɪˈstrʌkʃn/", meaning: "Sự phá hủy môi trường sống" },
+                { word: "Sanctuary", phonetic: "/ˈsæŋktʃuəri/", meaning: "Khu bảo tồn thiên nhiên" }
+            ],
+            quiz: [
+                {
+                    question: "Governments should impose stricter punishments on illegal __________ and wildlife trade.",
+                    options: ["poaching", "gardening", "farming", "fishing"],
+                    answer: 0
+                },
+                {
+                    question: "Many national parks serve as a safe __________ for rare animals.",
+                    options: ["sanctuary", "factory", "market", "prison"],
+                    answer: 0
+                }
+            ]
+        },
+        {
+            id: "g12-u9",
+            title: "Unit 9: Career Paths",
+            description: "Chủ đề mang tính định hướng, giúp học sinh chuẩn bị tâm thế cho giai đoạn chuyển giao quan trọng sau khi tốt nghiệp THPT.",
+            vocab: [
+                { word: "Career path", phonetic: "/kəˈrɪə pɑːθ/", meaning: "Con đường sự nghiệp" },
+                { word: "Apprenticeship", phonetic: "/əˈprentɪsʃɪp/", meaning: "Chương trình học nghề" },
+                { word: "Prospects", phonetic: "/ˈprɒspekts/", meaning: "Triển vọng, viễn cảnh tương lai" },
+                { word: "Guidance", phonetic: "/ˈɡaɪdns/", meaning: "Sự hướng dẫn, tư vấn" }
+            ],
+            quiz: [
+                {
+                    question: "High school students often need career __________ before making major choices about their future.",
+                    options: ["guidance", "pressure", "punishment", "neglect"],
+                    answer: 0
+                },
+                {
+                    question: "Choosing a clear __________ helps young people stay focused on their professional goals.",
+                    options: ["career path", "dead end", "hobby", "vacation"],
+                    answer: 0
+                }
+            ]
+        },
+        {
+            id: "g12-u10",
+            title: "Unit 10: Lifelong Learning",
+            description: "Chủ đề khơi dậy tinh thần học tập không dừng lại mà là một hành trình liên tục trong suốt cuộc đời.",
             vocab: [
                 { word: "Lifelong learning", phonetic: "/ˈlaɪflɒŋ ˈlɜːnɪŋ/", meaning: "Học tập suốt đời" },
                 { word: "Upskill", phonetic: "/ˌʌpˈskɪl/", meaning: "Nâng cao kỹ năng" },
@@ -188,52 +233,6 @@ const grade12Data = {
                 {
                     question: "Employees need to __________ regularly to keep up with new technology.",
                     options: ["upskill", "retire", "quit", "delay"],
-                    answer: 0
-                }
-            ]
-        },
-        {
-            id: "g12-u9",
-            title: "Unit 9: Career Paths",
-            description: "Chủ đề mang tính định hướng, giúp học sinh có tâm thế cho giai đoạn chuyển giao quan trọng sau khi tốt nghiệp THPT.",
-            vocab: [
-                { word: "Cultural diversity", phonetic: "/ˈkʌltʃərəl daɪˈvɜːsəti/", meaning: "Sự đa dạng văn hóa" },
-                { word: "Integration", phonetic: "/ˌɪntɪˈɡreɪʃn/", meaning: "Sự hội nhập" },
-                { word: "Assimilation", phonetic: "/əˌsɪməˈleɪʃn/", meaning: "Sự đồng hóa văn hóa" },
-                { word: "Preserve", phonetic: "/prɪˈzɜːv/", meaning: "Bảo tồn, giữ gìn" }
-            ],
-            quiz: [
-                {
-                    question: "Globalisation encourages international __________ while maintaining local identities.",
-                    options: ["integration", "isolation", "separation", "conflict"],
-                    answer: 0
-                },
-                {
-                    question: "Schools should celebrate __________ to teach students respect for different traditions.",
-                    options: ["cultural diversity", "uniformity", "sameness", "isolation"],
-                    answer: 0
-                }
-            ]
-        },
-        {
-            id: "g12-u10",
-            title: "Unit 10: Lifelong Learning",
-            description: "Chủ đề khơi dậy tinh thần học tập không dừng lại mà là một hành trình liên tục trong suốt cuộc đời.",
-            vocab: [
-                { word: "Cryptocurrency", phonetic: "/ˈkrɪptəʊkʌrənsi/", meaning: "Tiền mã hóa, tiền ảo" },
-                { word: "Cashless society", phonetic: "/ˈkæʃləs səˈsəti/", meaning: "Xã hội không dùng tiền mặt" },
-                { word: "Transaction", phonetic: "/trænˈzækʃn/", meaning: "Giao dịch (tài chính)" },
-                { word: "Financial literacy", phonetic: "/faɪˈnænʃl ˈlɪtərəsi/", meaning: "Kiến thức tài chính" }
-            ],
-            quiz: [
-                {
-                    question: "More and more people are using smartphones for daily financial __________.",
-                    options: ["transactions", "punishments", "interruptions", "delays"],
-                    answer: 0
-                },
-                {
-                    question: "A __________ relies heavily on digital wallets and electronic banking.",
-                    options: ["cashless society", "barter economy", "poverty line", "traditional market"],
                     answer: 0
                 }
             ]
