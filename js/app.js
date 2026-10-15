@@ -463,6 +463,7 @@ function playPreviousTrack() {
 
 // 6. Lắng nghe sự kiện khi bài hát kết thúc để tự động chuyển bài hoặc lặp lại
 document.addEventListener('DOMContentLoaded', () => {
+   loadPlaylistFromStorage();
     const audio = document.getElementById('bg-audio');
     if (audio) {
         audio.addEventListener('ended', () => {
