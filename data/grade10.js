@@ -108,7 +108,7 @@ const grade10Data = {
                 { word: "Invention", phonetic: "/ɪnˈvenʃn/", meaning: "Sự phát minh, vật phát minh" },
                 { word: "Convenient", phonetic: "/kənˈviːniənt/", meaning: "Thuận tiện, tiện lợi" },
                 { word: "Device", phonetic: "/dɪˈvaɪs/", meaning: "Thiết bị, dụng cụ" },
-                { word: "Durable", phonetic: "/ˈdʊrəbl/", meaning: "Bền, lâu bền" }
+                { word: "Durable", phonetic: "/ˈdjʊərəbl/", meaning: "Bền, lâu bền" }
             ],
             quiz: [
                 {
@@ -154,7 +154,7 @@ const grade10Data = {
                 { word: "Organisation", phonetic: "/ˌɔːɡənaɪˈzeɪʃn/", meaning: "Tổ chức, cơ quan" },
                 { word: "Global", phonetic: "/ˈgləʊbl/", meaning: "Toàn cầu" },
                 { word: "Promote", phonetic: "/prəˈməʊt/", meaning: "Thúc đẩy, quảng bá" },
-                { word: "MEMBER", phonetic: "/ˈmembə(r)/", meaning: "Thành viên" }
+                { word: "Member", phonetic: "/ˈmembə(r)/", meaning: "Thành viên" }
             ],
             quiz: [
                 {
