@@ -10,8 +10,8 @@ const grade12Data = {
     units: [
         {
             id: "g12-u1",
-            title: "Unit 1: Life Stories",
-            description: "Chủ đề Câu chuyện cuộc đời các danh nhân, tiểu sử và những cống hiến to lớn.",
+            title: "Unit 1: Life Stories We Admire",
+            description: "Chủ đề Câu chuyện cuộc đời các nhân vật đáng noi gương, ngưỡng mộ.",
             vocab: [
                 { word: "Biography", phonetic: "/baɪˈɒɡrəfi/", meaning: "Tiểu sử, lý lịch" },
                 { word: "Dedication", phonetic: "/ˌdedɪˈkeɪʃn/", meaning: "Sự cống hiến, tận tụy" },
@@ -33,8 +33,8 @@ const grade12Data = {
         },
         {
             id: "g12-u2",
-            title: "Unit 2: A Healthy Lifestyle",
-            description: "Chủ đề Lối sống lành mạnh, chăm sóc sức khỏe thể chất và tinh thần.",
+            title: "Unit 2: A Multicultural World",
+            description: "Chủ đề mở ra góc nhìn toàn cảnh về sự giao thoa, đa dạng và hội nhập văn hóa trong kỷ nguyên toàn cầu hóa.",
             vocab: [
                 { word: "Well-being", phonetic: "/ˈwel biːɪŋ/", meaning: "Sự khỏe mạnh, hạnh phúc toàn diện" },
                 { word: "Immune system", phonetic: "/ɪˈmjuːn ɪstəm/", meaning: "Hệ miễn dịch" },
@@ -102,7 +102,7 @@ const grade12Data = {
         },
         {
             id: "g12-u5",
-            title: "Unit 5: The World of Work",
+            title: "Unit 5: The World Of Work",
             description: "Chủ đề Thế giới việc làm, kỹ năng phỏng vấn và xu hướng nghề nghiệp mới.",
             vocab: [
                 { word: "Employment", phonetic: "/ɪmˈplɔɪmənt/", meaning: "Việc làm, sự tuyển dụng" },
@@ -148,8 +148,8 @@ const grade12Data = {
         },
         {
             id: "g12-u7",
-            title: "Unit 7: Artificial Intelligence in Education",
-            description: "Chủ đề Ứng dụng AI trong học tập, giảng dạy và cá nhân hóa giáo dục.",
+            title: "Unit 7: The World Of Mass Media",
+            description: "Chủ đề đi sâu vào vai trò, sức ảnh hưởng và sự tiến hóa mạnh mẽ của truyền thông trong kỷ nguyên số.",
             vocab: [
                 { word: "Personalised", phonetic: "/ˈpɜːsənəlaɪzd/", meaning: "Được cá nhân hóa" },
                 { word: "Adaptive learning", phonetic: "/əˈdaptɪv ˈlɜːnɪŋ/", meaning: "Học tập thích ứng" },
@@ -171,8 +171,8 @@ const grade12Data = {
         },
         {
             id: "g12-u8",
-            title: "Unit 8: Lifelong Learning",
-            description: "Chủ đề Học tập suốt đời, phát triển bản thân và kỹ năng tự học thời số.",
+            title: "Unit 8: Wildlife Conservation",
+            description: "sự suy giảm đa dạng sinh học và nguy cơ tuyệt chủng của các loài động thực vật hoang dã.",
             vocab: [
                 { word: "Lifelong learning", phonetic: "/ˈlaɪflɒŋ ˈlɜːnɪŋ/", meaning: "Học tập suốt đời" },
                 { word: "Upskill", phonetic: "/ˌʌpˈskɪl/", meaning: "Nâng cao kỹ năng" },
@@ -194,8 +194,8 @@ const grade12Data = {
         },
         {
             id: "g12-u9",
-            title: "Unit 9: Cultural Diversity",
-            description: "Chủ đề Đa dạng văn hóa toàn cầu, hội nhập quốc tế và giao lưu văn hóa.",
+            title: "Unit 9: Career Paths",
+            description: "Chủ đề mang tính định hướng, giúp học sinh có tâm thế cho giai đoạn chuyển giao quan trọng sau khi tốt nghiệp THPT.",
             vocab: [
                 { word: "Cultural diversity", phonetic: "/ˈkʌltʃərəl daɪˈvɜːsəti/", meaning: "Sự đa dạng văn hóa" },
                 { word: "Integration", phonetic: "/ˌɪntɪˈɡreɪʃn/", meaning: "Sự hội nhập" },
@@ -217,8 +217,8 @@ const grade12Data = {
         },
         {
             id: "g12-u10",
-            title: "Unit 10: The Future of Money",
-            description: "Chủ đề Tương lai của tiền tệ, thanh toán điện tử và kinh tế số.",
+            title: "Unit 10: Lifelong Learning",
+            description: "Chủ đề khơi dậy tinh thần học tập không dừng lại mà là một hành trình liên tục trong suốt cuộc đời.",
             vocab: [
                 { word: "Cryptocurrency", phonetic: "/ˈkrɪptəʊkʌrənsi/", meaning: "Tiền mã hóa, tiền ảo" },
                 { word: "Cashless society", phonetic: "/ˈkæʃləs səˈsəti/", meaning: "Xã hội không dùng tiền mặt" },
