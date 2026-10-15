@@ -33,7 +33,7 @@ const grade10Data = {
         },
         {
             id: "g10-u2",
-            title: "Unit 2: Humans and the Environment",
+            title: "Unit 2: Humans And The Environment",
             description: "Chủ đề Con người và Môi trường, lối sống xanh và bảo vệ thiên nhiên.",
             vocab: [
                 { word: "Carbon footprint", phonetic: "/ˌkɑːbən ˈfʊtprɪnt/", meaning: "Dấu chân carbon (lượng khí thải CO2)" },
@@ -79,7 +79,7 @@ const grade10Data = {
         },
         {
             id: "g10-u4",
-            title: "Unit 4: For a Better Community",
+            title: "Unit 4: For A Better Community",
             description: "Chủ đề Hoạt động Tình nguyện và công tác cộng đồng.",
             vocab: [
                 { word: "Volunteer", phonetic: "/ˌvɒlənˈtɪə(r)/", meaning: "Tình nguyện viên / Làm tình nguyện" },
@@ -148,7 +148,7 @@ const grade10Data = {
         },
         {
             id: "g10-u7",
-            title: "Unit 7: Viet Nam and International Organisations",
+            title: "Unit 7: Viet Nam And International Organisations",
             description: "Chủ đề Việt Nam và các tổ chức quốc tế (UN, ASEAN, UNESCO...).",
             vocab: [
                 { word: "Organisation", phonetic: "/ˌɔːɡənaɪˈzeɪʃn/", meaning: "Tổ chức, cơ quan" },
@@ -171,7 +171,7 @@ const grade10Data = {
         },
         {
             id: "g10-u8",
-            title: "Unit 8: New Ways to Learn",
+            title: "Unit 8: New Ways To Learn",
             description: "Chủ đề Phương pháp học tập mới, công nghệ thông tin trong giáo dục.",
             vocab: [
                 { word: "Platform", phonetic: "/ˈplætfɔːm/", meaning: "Nền tảng (công nghệ, giáo dục)" },
@@ -194,7 +194,7 @@ const grade10Data = {
         },
         {
             id: "g10-u9",
-            title: "Unit 9: Protecting the Environment",
+            title: "Unit 9: Protecting The Environment",
             description: "Chủ đề Bảo vệ môi trường sống, động vật hoang dã và hệ sinh thái.",
             vocab: [
                 { word: "Endangered", phonetic: "/ɪnˈdeɪndʒəd/", meaning: "Có nguy cơ tuyệt chủng" },
