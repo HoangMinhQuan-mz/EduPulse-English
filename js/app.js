@@ -168,6 +168,7 @@ function handleCredentialResponse(response) {
 
     localStorage.setItem('edupulse_user', JSON.stringify(googleUser));
     applyLoggedInUI(googleUser);
+    loadPlaylistFromStorage();
     alert(`Xin chào ${googleUser.name}! Đã kết nối tài khoản Google thành công.`);
 }
 
@@ -247,30 +248,61 @@ function handleMusicUpload(event) {
     });
 }
 
+// Hàm tạo Khóa lưu trữ riêng cho từng tài khoản dựa vào Email
+function getStorageKey() {
+    const savedUser = localStorage.getItem('edupulse_user');
+    if (savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
+            if (user && user.email) {
+                return `edupulse_playlist_${user.email}`; // Khóa riêng theo email tài khoản
+            }
+        } catch (e) {}
+    }
+    return 'edupulse_playlist_guest'; // Khoang riêng nếu chưa đăng nhập (Khách)
+}
+
+// Lưu danh sách phát vào khóa riêng của tài khoản hiện tại
 function savePlaylistToStorage() {
     try {
-        localStorage.setItem('edupulse_playlist', JSON.stringify(playlist));
+        const key = getStorageKey();
+        localStorage.setItem(key, JSON.stringify(playlist));
     } catch (err) {
         console.log("Dung lượng file nhạc quá lớn:", err);
     }
 }
 
+// Khôi phục danh sách phát tương ứng với tài khoản đang đăng nhập
 function loadPlaylistFromStorage() {
-    const saved = localStorage.getItem('edupulse_playlist');
+    const key = getStorageKey();
+    const saved = localStorage.getItem(key);
+    
+    // Reset danh sách hiện tại trước khi load
+    playlist = [];
+    currentTrackIndex = -1;
+    
+    const trackTitle = document.getElementById('track-title');
+    const statusEl = document.getElementById('track-status');
+    const audio = document.getElementById('bg-audio');
+    
+    if (audio) { audio.pause(); audio.src = ''; }
+    if (trackTitle) trackTitle.textContent = 'Chưa có bài hát nào';
+    if (statusEl) statusEl.textContent = 'Tải lên danh sách nhạc MP3';
+
     if (saved) {
         try {
             playlist = JSON.parse(saved);
             renderPlaylist();
             if (playlist.length > 0) {
                 currentTrackIndex = 0;
-                const trackTitle = document.getElementById('track-title');
-                const statusEl = document.getElementById('track-status');
                 if (trackTitle) trackTitle.textContent = playlist[0].name;
-                if (statusEl) statusEl.textContent = `Đã khôi phục ${playlist.length} bài hát`;
+                if (statusEl) statusEl.textContent = `Đã tải ${playlist.length} bài hát của tài khoản này`;
             }
         } catch (e) {
             console.log("Lỗi tải playlist:", e);
         }
+    } else {
+        renderPlaylist(); // Hiển thị trống nếu tài khoản này chưa tải bài nào
     }
 }
 
