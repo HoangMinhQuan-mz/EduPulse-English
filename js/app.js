@@ -4,12 +4,15 @@
    ========================================================= */
 
 // Biến trạng thái toàn cục (Global State)
+
 let currentGrade = 10;
 let currentUnitData = null;
 let playlist = [];
 let currentTrackIndex = -1;
 let isMinimized = false;
 let isUserLoggedIn = false;
+let isShuffle = false;
+let isRepeat = false;
 
 /* =========================================================
    1. KHỞI TẠO ỨNG DỤNG KHI TẢI TRANG
@@ -297,6 +300,7 @@ async function savePlaylistToStorage() {
 }
 
 // Tải danh sách: Gộp 3 bài mặc định lên đầu + các bài tự tải từ IndexedDB
+
 async function loadPlaylistFromStorage() {
     try {
         const db = await openMusicDB();
@@ -306,9 +310,9 @@ async function loadPlaylistFromStorage() {
 
         request.onsuccess = () => {
             const userTracks = request.result || [];
-            
-            // Gộp 3 bài mặc định + bài người dùng tải lên từ máy
             playlist = [...defaultPlaylist, ...userTracks];
+            
+            // TỰ ĐỘNG CHỌN SẴN BÀI ĐẦU TIÊN KHI LOAD TRANG
             currentTrackIndex = playlist.length > 0 ? 0 : -1;
             
             const trackTitle = document.getElementById('track-title');
@@ -318,7 +322,14 @@ async function loadPlaylistFromStorage() {
 
             if (playlist.length > 0) {
                 if (trackTitle) trackTitle.textContent = playlist[0].name;
-                if (statusEl) statusEl.textContent = `Tổng số: ${playlist.length} bài hát`;
+                if (statusEl) statusEl.textContent = `Bài 1 / ${playlist.length}`;
+                
+                // Gán sẵn nguồn audio để sẵn sàng bấm Play là chạy ngay
+                const audio = document.getElementById('bg-audio');
+                if (audio) {
+                    let audioSrc = playlist[0].isDefault ? playlist[0].url : URL.createObjectURL(playlist[0].file);
+                    audio.src = audioSrc;
+                }
             } else {
                 if (trackTitle) trackTitle.textContent = 'Chưa có bài hát nào';
                 if (statusEl) statusEl.textContent = 'Tải lên danh sách nhạc MP3';
@@ -327,98 +338,12 @@ async function loadPlaylistFromStorage() {
     } catch (e) {
         console.log("Lỗi tải playlist:", e);
         playlist = [...defaultPlaylist];
+        currentTrackIndex = playlist.length > 0 ? 0 : -1;
         renderPlaylist();
     }
 }
 
-// Xử lý khi người dùng chọn thêm file nhạc từ máy tính
-function handleMusicUpload(event) {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        playlist.push({
-            name: file.name,
-            file: file, // Lưu file Blob từ máy tính
-            isDefault: false
-        });
-    }
-
-    savePlaylistToStorage();
-    renderPlaylist();
-
-    if (currentTrackIndex === -1 && playlist.length > 0) {
-        currentTrackIndex = 0;
-        playTrack(0);
-    }
-}
-
-// Hiển thị danh sách phát lên giao diện
-function renderPlaylist() {
-    const container = document.getElementById('playlist-container');
-    const countEl = document.getElementById('playlist-count');
-    if (!container) return;
-
-    if (countEl) countEl.textContent = playlist.length;
-
-    if (playlist.length === 0) {
-        container.innerHTML = `<div class="text-center py-4 text-slate-400 italic text-[11px]">Chưa có bài hát trong danh sách</div>`;
-        return;
-    }
-
-    container.innerHTML = '';
-
-    playlist.forEach((track, index) => {
-        const isActive = index === currentTrackIndex;
-        const itemHTML = `
-            <div onclick="playTrack(${index})" class="group flex items-center justify-between p-2 rounded-lg cursor-pointer transition ${isActive ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100' : 'hover:bg-slate-100 text-slate-700'}">
-                <div class="flex items-center gap-2 truncate flex-1">
-                    <i class="fa-solid ${isActive ? 'fa-volume-high text-indigo-600' : 'fa-music text-slate-400'} text-[10px]"></i>
-                    <span class="truncate text-xs">${track.name} ${track.isDefault ? '<span class="text-[9px] text-indigo-500 font-normal">(Mặc định)</span>' : ''}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    ${isActive ? '<span class="text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded">Đang phát</span>' : ''}
-                    <button onclick="removeTrack(event, ${index})" title="Xóa bài này" class="text-slate-400 hover:text-rose-600 p-1 transition">
-                        <i class="fa-solid fa-trash-can text-[11px]"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-        container.innerHTML += itemHTML;
-    });
-}
-
-// Xóa bài hát (Xử lý thông minh cả bài mặc định lẫn bài tự tải)
-function removeTrack(event, index) {
-    event.stopPropagation();
-    const track = playlist[index];
-
-    if (confirm(`Bạn có chắc chắn muốn xóa bài hát "${track.name}" không?`)) {
-        if (track.isDefault) {
-            playlist.splice(index, 1);
-        } else {
-            playlist.splice(index, 1);
-            savePlaylistToStorage();
-        }
-
-        if (index === currentTrackIndex) {
-            const audio = document.getElementById('bg-audio');
-            if (audio) { audio.pause(); audio.src = ''; }
-            currentTrackIndex = -1;
-            const trackTitle = document.getElementById('track-title');
-            const statusEl = document.getElementById('track-status');
-            if (trackTitle) trackTitle.textContent = 'Chưa có bài hát nào';
-            if (statusEl) statusEl.textContent = 'Chọn bài hát để phát';
-        } else if (index < currentTrackIndex) {
-            currentTrackIndex--;
-        }
-
-        renderPlaylist();
-    }
-}
-
-// Phát nhạc chuẩn xác (hỗ trợ cả file từ máy tính lẫn link mặc định)
+// 2. Sửa hàm playTrack để xử lý chuẩn xác
 function playTrack(index) {
     if (index < 0 || index >= playlist.length) return;
     currentTrackIndex = index;
@@ -433,9 +358,9 @@ function playTrack(index) {
         let audioSrc = "";
         
         if (track.isDefault) {
-            audioSrc = track.url; // Link từ thư mục audio/ trên GitHub
+            audioSrc = track.url;
         } else if (track.file instanceof File || track.file instanceof Blob) {
-            audioSrc = URL.createObjectURL(track.file); // File tải lên từ máy
+            audioSrc = URL.createObjectURL(track.file);
         } else if (track.file) {
             const blob = new Blob([track.file], { type: 'audio/mp3' });
             audioSrc = URL.createObjectURL(blob);
@@ -453,7 +378,7 @@ function playTrack(index) {
     renderPlaylist();
 }
 
-// Các nút điều khiển phát/tạm dừng/tiếp theo/trước đó
+// 3. Sửa hàm togglePlayMusic để bấm phát được ngay lập tức
 function togglePlayMusic() {
     const audio = document.getElementById('bg-audio');
     const playBtn = document.getElementById('play-btn');
@@ -469,6 +394,11 @@ function togglePlayMusic() {
     }
 
     if (audio.paused) {
+        // Nếu audio chưa có src thì gán src cho bài hiện tại
+        if (!audio.src || audio.src === "") {
+            playTrack(currentTrackIndex);
+            return;
+        }
         audio.play().then(() => {
             if (playBtn) playBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
         });
@@ -478,11 +408,50 @@ function togglePlayMusic() {
     }
 }
 
+// 4. Thêm hàm xử lý nút Lặp lại (Repeat) và Ngẫu nhiên (Shuffle)
+function toggleShuffle() {
+    isShuffle = !isShuffle;
+    const btn = document.getElementById('shuffle-btn');
+    if (btn) {
+        if (isShuffle) {
+            btn.classList.add('text-indigo-600', 'bg-indigo-50');
+            btn.classList.remove('text-slate-400');
+        } else {
+            btn.classList.remove('text-indigo-600', 'bg-indigo-50');
+            btn.classList.add('text-slate-400');
+        }
+    }
+}
+
+function toggleRepeat() {
+    isRepeat = !isRepeat;
+    const btn = document.getElementById('repeat-btn');
+    if (btn) {
+        if (isRepeat) {
+            btn.classList.add('text-indigo-600', 'bg-indigo-50');
+            btn.classList.remove('text-slate-400');
+        } else {
+            btn.classList.remove('text-indigo-600', 'bg-indigo-50');
+            btn.classList.add('text-slate-400');
+        }
+    }
+}
+
+// 5. Cập nhật hàm Next và Previous hỗ trợ Ngẫu nhiên
 function playNextTrack() {
     if (playlist.length === 0) return;
-    let nextIndex = currentTrackIndex + 1;
-    if (nextIndex >= playlist.length) nextIndex = 0;
-    playTrack(nextIndex);
+    
+    if (isShuffle) {
+        let nextIndex;
+        do {
+            nextIndex = Math.floor(Math.random() * playlist.length);
+        } while (nextIndex === currentTrackIndex && playlist.length > 1);
+        playTrack(nextIndex);
+    } else {
+        let nextIndex = currentTrackIndex + 1;
+        if (nextIndex >= playlist.length) nextIndex = 0;
+        playTrack(nextIndex);
+    }
 }
 
 function playPreviousTrack() {
@@ -491,6 +460,21 @@ function playPreviousTrack() {
     if (prevIndex < 0) prevIndex = playlist.length - 1;
     playTrack(prevIndex);
 }
+
+// 6. Lắng nghe sự kiện khi bài hát kết thúc để tự động chuyển bài hoặc lặp lại
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('bg-audio');
+    if (audio) {
+        audio.addEventListener('ended', () => {
+            if (isRepeat) {
+                audio.currentTime = 0;
+                audio.play();
+            } else {
+                playNextTrack();
+            }
+        });
+    }
+});
 
 function toggleMinimizeWidget() {
     const body = document.getElementById('widget-body');
