@@ -234,12 +234,12 @@ const defaultPlaylist = [
         isDefault: true
     },
     {
-        name: "TRUYỀN ĐỘNG LỰC",
+        name: "Truyền Động Lực",
         url: "audio/TRUYỀN ĐỘNG LỰC.mp3",
         isDefault: true
     },
     {
-        name: "RELAX CHILL",
+        name: "Relax Chill",
         url: "audio/RELAX CHILL.mp3",
         isDefault: true
     }
