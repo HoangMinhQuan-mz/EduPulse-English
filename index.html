@@ -174,20 +174,33 @@
                 <input type="file" id="upload-music" accept="audio/*" multiple class="hidden" onchange="handleMusicUpload(event)">
             </label>
 
-            <div class="flex items-center gap-1">
+            <div class="flex items-center justify-center gap-2">
+                <!-- Nút Bật/Tắt Trộn bài (Shuffle) -->
+                <button onclick="toggleShuffle()" id="shuffle-btn" title="Phát ngẫu nhiên" class="text-slate-400 hover:text-indigo-600 p-2 transition">
+                    <i class="fa-solid fa-shuffle text-xs"></i>
+                </button>
+
                 <!-- Nút Bài trước -->
                 <button onclick="playPreviousTrack()" title="Bài trước" class="p-2 text-slate-600 hover:text-indigo-600 transition">
                     <i class="fa-solid fa-backward-step text-xs"></i>
                 </button>
+
                 <!-- Nút Play/Pause -->
-                <button onclick="togglePlayMusic()" id="play-btn" class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition shadow-sm">
+                <button onclick="togglePlayMusic()" id="play-btn" title="Phát / Tạm dừng" class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition shadow-sm">
                     <i class="fa-solid fa-play text-xs"></i>
                 </button>
+
                 <!-- Nút Bài tiếp -->
                 <button onclick="playNextTrack()" title="Bài tiếp theo" class="p-2 text-slate-600 hover:text-indigo-600 transition">
                     <i class="fa-solid fa-forward-step text-xs"></i>
                 </button>
+
+                <!-- Nút Bật/Tắt Lặp lại (Repeat) -->
+                <button onclick="toggleRepeat()" id="repeat-btn" title="Lặp lại" class="text-slate-400 hover:text-indigo-600 p-2 transition">
+                    <i class="fa-solid fa-repeat text-xs"></i>
+                </button>
             </div>
+             
         </div>
 
         <!-- Danh sách phát (Playlist Container) -->
