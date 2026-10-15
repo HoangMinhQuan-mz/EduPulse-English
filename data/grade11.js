@@ -10,7 +10,7 @@ const grade11Data = {
     units: [
         {
             id: "g11-u1",
-            title: "Unit 1: A Long and Healthy Life",
+            title: "Unit 1: A Long And Healthy Life",
             description: "Chủ đề Sức khỏe, thói quen sống lành mạnh và tuổi thọ.",
             vocab: [
                 { word: "Life expectancy", phonetic: "/ˈlaɪf ɪkspektənsi/", meaning: "Tuổi thọ trung bình" },
@@ -56,7 +56,7 @@ const grade11Data = {
         },
         {
             id: "g11-u3",
-            title: "Unit 3: Cities of the Future",
+            title: "Unit 3: Cities Of The Future",
             description: "Chủ đề Đô thị thông minh, thành phố tương lai và công nghệ đô thị.",
             vocab: [
                 { word: "Smart city", phonetic: "/smɑːt ˈsɪti/", meaning: "Thành phố thông minh" },
@@ -79,7 +79,7 @@ const grade11Data = {
         },
         {
             id: "g11-u4",
-            title: "Unit 4: ASEAN and Viet Nam",
+            title: "Unit 4: ASEAN And Viet Nam",
             description: "Chủ đề Hiệp hội các quốc gia Đông Nam Á và vai trò của Việt Nam.",
             vocab: [
                 { word: "Charter", phonetic: "/ˈtʃɑːtə(r)/", meaning: "Hiến chương" },
