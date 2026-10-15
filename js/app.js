@@ -394,7 +394,15 @@ function playTrack(index) {
     const playBtn = document.getElementById('play-btn');
 
     if (audio) {
-        audio.src = track.url;
+        // KIỂM TRA VÀ TẠO ĐƯỜNG DẪN TẠM THỜI TỪ FILE BLOB HOẶC TRACK.URL CŨ
+        let audioSrc = "";
+        if (track.file) {
+            audioSrc = URL.createObjectURL(track.file);
+        } else if (track.url) {
+            audioSrc = track.url;
+        }
+
+        audio.src = audioSrc;
         if (trackTitle) trackTitle.textContent = track.name;
         if (statusEl) statusEl.textContent = `Bài ${index + 1} / ${playlist.length}`;
 
