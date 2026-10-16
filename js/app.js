@@ -99,6 +99,8 @@ function renderUnitList() {
     const container = document.getElementById('unit-list-container');
     if (!container || !currentUnitData || !currentUnitData.units) return;
 
+    // Đảm bảo container giữ đúng định dạng lưới card
+    container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
     container.innerHTML = '';
 
     currentUnitData.units.forEach(unit => {
@@ -123,7 +125,6 @@ function renderUnitList() {
     initMouseLightEffect();
 }
 
-// Mở danh sách các phần học (Lessons) trong Unit
 function openUnitDetail(unitId) {
     if (!currentUnitData || !currentUnitData.units) return;
 
@@ -133,7 +134,10 @@ function openUnitDetail(unitId) {
         return;
     }
 
-    const mainContainer = document.getElementById('unit-list-container').parentNode;
+    const container = document.getElementById('unit-list-container');
+    if (!container) return;
+
+    container.className = "space-y-4 max-w-4xl mx-auto";
 
     let lessonsHTML = '';
     if (unit.lessons && unit.lessons.length > 0) {
@@ -155,9 +159,9 @@ function openUnitDetail(unitId) {
         lessonsHTML = `<p class="text-slate-500 italic">Đang cập nhật nội dung các mục bài học cho Unit này...</p>`;
     }
 
-    mainContainer.innerHTML = `
+    container.innerHTML = `
         <div class="space-y-6">
-            <button onclick="location.reload()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-medium flex items-center gap-2 text-sm">
+            <button onclick="renderUnitList()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-medium flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách Unit
             </button>
 
@@ -177,7 +181,6 @@ function openUnitDetail(unitId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Mở chi tiết từng bài học nhỏ (Lesson) hiển thị lý thuyết, từ vựng và trắc nghiệm
 function openLessonDetail(unitId, lessonId) {
     let unit = null;
     if (currentGrade === 10 && typeof grade10Data !== 'undefined') {
@@ -192,7 +195,10 @@ function openLessonDetail(unitId, lessonId) {
     const lesson = unit.lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
-    const mainContainer = document.getElementById('unit-list-container').parentNode;
+    const container = document.getElementById('unit-list-container');
+    if (!container) return;
+
+    container.className = "space-y-6 max-w-4xl mx-auto";
 
     let vocabHTML = '';
     if (lesson.vocab && lesson.vocab.length > 0) {
@@ -243,7 +249,7 @@ function openLessonDetail(unitId, lessonId) {
         `;
     }
 
-    mainContainer.innerHTML = `
+    container.innerHTML = `
         <div class="space-y-6">
             <button onclick="openUnitDetail('${unitId}')" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-medium flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách các phần
