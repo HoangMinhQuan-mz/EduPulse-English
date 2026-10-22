@@ -1,1 +1,190 @@
+/* =========================================================
+   EDUPULSE ENGLISH - STYLESHEET
+   ---------------------------------------------------------
+   ĐỔI GIAO DIỆN: chỉ cần sửa khối "BẢNG MÀU" bên dưới,
+   hoặc đổi theme mặc định trong js/theme.js (DEFAULT_THEME).
+   Màu viết dạng "R G B" (không có dấu phẩy) để Tailwind ghép được độ mờ.
+   Tên: brand = màu chính | accent = màu phụ | ink = chữ/viền/nền xám
+   ========================================================= */
+
+/* ---------- BẢNG MÀU: theme mặc định "pop" (tím + hồng) ---------- */
+:root {
+    --brand-50: 245 243 255;  --brand-100: 237 233 254; --brand-200: 221 214 254;
+    --brand-300: 196 181 253; --brand-400: 167 139 250; --brand-500: 139 92 246;
+    --brand-600: 124 58 237;  --brand-700: 109 40 217;  --brand-800: 91 33 182; --brand-900: 76 29 149;
+
+    --accent-50: 253 242 248;  --accent-100: 252 231 243; --accent-200: 251 207 232;
+    --accent-300: 249 168 212; --accent-400: 244 114 182; --accent-500: 236 72 153;
+    --accent-600: 219 39 119;  --accent-700: 190 24 93;   --accent-800: 157 23 77; --accent-900: 131 24 67;
+
+    --ink-50: 248 250 252;  --ink-100: 241 245 249; --ink-200: 226 232 240; --ink-300: 203 213 225;
+    --ink-400: 148 163 184; --ink-500: 100 116 139; --ink-600: 71 85 105;   --ink-700: 51 65 85;
+    --ink-800: 30 41 59;    --ink-900: 15 23 42;
+
+    --surface: 255 255 255;                 /* nền thẻ, header */
+    --glow-a: 167 139 250; --glow-b: 244 114 182;   /* 2 vệt sáng nền trang */
+    --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---------- Các theme khác (đặt data-theme trên <html>) ---------- */
+[data-theme="ocean"] {
+    --brand-50: 240 253 250;  --brand-100: 204 251 241; --brand-200: 153 246 228;
+    --brand-300: 94 234 212;  --brand-400: 45 212 191;  --brand-500: 20 184 166;
+    --brand-600: 13 148 136;  --brand-700: 15 118 110;  --brand-800: 17 94 89; --brand-900: 19 78 74;
+    --accent-50: 240 249 255;  --accent-100: 224 242 254; --accent-200: 186 230 253;
+    --accent-300: 125 211 252; --accent-400: 56 189 248;  --accent-500: 14 165 233;
+    --accent-600: 2 132 199;   --accent-700: 3 105 161;   --accent-800: 7 89 133; --accent-900: 12 74 110;
+    --glow-a: 45 212 191; --glow-b: 56 189 248;
+}
+[data-theme="candy"] {
+    --brand-50: 255 241 242;  --brand-100: 255 228 230; --brand-200: 254 205 211;
+    --brand-300: 253 164 175; --brand-400: 251 113 133; --brand-500: 244 63 94;
+    --brand-600: 225 29 72;   --brand-700: 190 18 60;   --brand-800: 159 18 57; --brand-900: 136 19 55;
+    --accent-50: 255 247 237;  --accent-100: 255 237 213; --accent-200: 254 215 170;
+    --accent-300: 253 186 116; --accent-400: 251 146 60;  --accent-500: 249 115 22;
+    --accent-600: 234 88 12;   --accent-700: 194 65 12;   --accent-800: 154 52 18; --accent-900: 124 45 18;
+    --glow-a: 251 113 133; --glow-b: 251 146 60;
+}
+[data-theme="night"] {
+    --brand-50: 40 32 82;     --brand-100: 221 214 254; --brand-200: 76 62 140;
+    --brand-300: 109 90 190;  --brand-400: 167 139 250; --brand-500: 139 92 246;
+    --brand-600: 139 92 246;  --brand-700: 124 58 237;  --brand-800: 91 33 182; --brand-900: 233 228 255;
+    --accent-50: 60 25 55;    --accent-100: 90 30 75;   --accent-200: 130 40 100;
+    --accent-300: 249 168 212; --accent-400: 244 114 182; --accent-500: 236 72 153;
+    --accent-600: 236 72 153; --accent-700: 219 39 119; --accent-800: 190 24 93; --accent-900: 253 207 232;
+    --ink-50: 15 14 32;   --ink-100: 29 27 54;   --ink-200: 52 49 88;   --ink-300: 82 78 125;
+    --ink-400: 130 127 170; --ink-500: 160 158 195; --ink-600: 190 188 220; --ink-700: 210 208 235;
+    --ink-800: 233 232 248; --ink-900: 246 245 255;
+    --surface: 27 25 51;
+    --glow-a: 109 90 190; --glow-b: 190 24 93;
+}
+/* Tailwind gắn cứng bg-white: ghi đè riêng cho theme tối */
+[data-theme="night"] .bg-white,
+[data-theme="night"] .bg-white\/95 { background-color: rgb(var(--surface)); }
+
+/* ---------- NỀN & CHỮ ---------- */
+body[class] {
+    font-family: var(--font);
+    background-image:
+        radial-gradient(60rem 40rem at 90% -10%, rgb(var(--glow-a) / .18), transparent 60%),
+        radial-gradient(50rem 36rem at -10% 20%, rgb(var(--glow-b) / .14), transparent 60%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { letter-spacing: -0.01em; }
+
+.glass-card {
+    background: rgb(var(--surface) / .8);
+    backdrop-filter: blur(14px) saturate(1.4);
+}
+#main-header { border-bottom-color: rgb(var(--brand-500) / .15); }
+footer { background: transparent !important; }
+
+/* ---------- BANNER KHỐI LỚP (điểm nhấn chính của trang) ---------- */
+main > div:first-child {
+    position: relative; overflow: hidden; isolation: isolate;
+    background-image: linear-gradient(120deg, rgb(var(--brand-600)), rgb(var(--accent-500)));
+    border-radius: 1.75rem;
+    box-shadow: 0 24px 48px -20px rgb(var(--brand-600) / .55);
+}
+main > div:first-child::before,
+main > div:first-child::after {
+    content: ''; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none;
+}
+main > div:first-child::before {
+    width: 22rem; height: 22rem; right: -6rem; top: -9rem; background: rgb(255 255 255 / .14);
+}
+main > div:first-child::after {
+    width: 12rem; height: 12rem; right: 9rem; bottom: -7rem; background: rgb(255 255 255 / .10);
+}
+#grade-title { font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.1; }
+
+/* ---------- THẺ UNIT (mỗi thẻ một màu nhấn riêng) ---------- */
+#unit-list-container.grid > div:nth-child(6n+1) { --c: var(--brand-500); }
+#unit-list-container.grid > div:nth-child(6n+2) { --c: 236 72 153; }
+#unit-list-container.grid > div:nth-child(6n+3) { --c: 245 158 11; }
+#unit-list-container.grid > div:nth-child(6n+4) { --c: 16 185 129; }
+#unit-list-container.grid > div:nth-child(6n+5) { --c: 14 165 233; }
+#unit-list-container.grid > div:nth-child(6n+6) { --c: 244 63 94; }
+
+#unit-list-container.grid > div {
+    --c: var(--brand-500);
+    position: relative; overflow: hidden;
+    background: rgb(var(--surface));
+    border: 1px solid rgb(var(--ink-200));
+    border-radius: 1.5rem;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+/* thanh màu trên đầu thẻ */
+#unit-list-container.grid > div::after {
+    content: ''; position: absolute; left: 0; right: 0; top: 0; height: 5px;
+    background: linear-gradient(90deg, rgb(var(--c)), rgb(var(--c) / .35));
+}
+/* vệt sáng bám theo chuột */
+#unit-list-container.grid > div::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgb(var(--c) / .16), transparent 70%);
+    opacity: 0; transition: opacity .2s;
+}
+#unit-list-container.grid > div:hover::before { opacity: 1; }
+#unit-list-container.grid > div:hover {
+    transform: translateY(-4px);
+    border-color: rgb(var(--c) / .55);
+    box-shadow: 0 18px 32px -16px rgb(var(--c) / .45);
+}
+#unit-list-container.grid > div > * { position: relative; z-index: 2; }
+#unit-list-container.grid > div h3 { font-weight: 800; }
+#unit-list-container.grid > div span {
+    background: rgb(var(--c) / .12); color: rgb(var(--c));
+}
+#unit-list-container.grid > div button {
+    background-image: linear-gradient(135deg, rgb(var(--c)), rgb(var(--c) / .78));
+    border-radius: 1rem; font-weight: 700;
+    transition: transform .2s ease, filter .2s ease;
+}
+#unit-list-container.grid > div button:hover { transform: translateY(-1px); filter: brightness(1.06); }
+#unit-list-container.grid > div button:active { transform: scale(.98); }
+
+/* ---------- BỘ CHỌN KHỐI ---------- */
+#grade-selector {
+    background: rgb(var(--ink-100) / .9); padding: 4px; border-radius: 999px;
+    border: 1px solid rgb(var(--ink-200));
+}
+#grade-selector button { border-radius: 999px; transition: all .25s cubic-bezier(.4, 0, .2, 1); }
+#grade-selector button:hover { color: rgb(var(--brand-600)); }
+#grade-selector button.bg-white { background-color: rgb(var(--brand-600)); color: #fff; }
+[data-theme="night"] #grade-selector button.bg-white { background-color: rgb(var(--brand-600)); }
+
+/* ---------- TRANG BÀI HỌC ---------- */
+#unit-list-container:not(.grid) h2 { font-weight: 800; }
+#unit-list-container:not(.grid) .rounded-2xl { border-radius: 1.25rem; }
+#unit-list-container label:has(input:checked) {
+    border-color: rgb(var(--brand-500)); background: rgb(var(--brand-50));
+}
+
+/* ---------- NÚT ĐỔI THEME (do js/theme.js tạo ra) ---------- */
+.theme-swatch {
+    width: 100%; display: flex; align-items: center; gap: .6rem;
+    padding: .5rem .6rem; border-radius: .75rem; font-size: .8rem; font-weight: 600;
+    color: rgb(var(--ink-700)); transition: background .15s;
+}
+.theme-swatch:hover { background: rgb(var(--ink-100)); }
+.theme-swatch[aria-checked="true"] { background: rgb(var(--brand-50)); color: rgb(var(--brand-700)); }
+.theme-dot { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid rgb(var(--surface)); box-shadow: 0 0 0 1px rgb(var(--ink-300)); }
+
+/* ---------- HIỆU ỨNG & TRỢ NĂNG ---------- */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+#unit-list-container { animation: fadeIn .4s ease-out both; }
+
+:focus-visible { outline: 3px solid rgb(var(--brand-400)); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+.flashcard-inner { transition: transform .6s cubic-bezier(.4, 0, .2, 1); transform-style: preserve-3d; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgb(var(--ink-100)); }
+::-webkit-scrollbar-thumb { background: rgb(var(--ink-300)); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--ink-400)); }
+
+#playlist-container > div:hover button { opacity: 1 !important; }
 
