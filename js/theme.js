@@ -37,7 +37,7 @@ function toggleThemeMenu(force) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const anchor = document.getElementById('side-tools');
+    const anchor = document.getElementById('btn-collapse-header');
     if (!anchor) return;
 
     const wrap = document.createElement('div');
@@ -48,14 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="fa-solid fa-palette text-xs"></i>
         </button>
         <div id="theme-menu" role="radiogroup" aria-label="Chọn giao diện"
-            class="hidden absolute bottom-full mb-3 right-0 lg:bottom-0 lg:right-auto lg:left-full lg:mb-0 lg:ml-4 w-44 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-50">
+            class="hidden absolute right-0 mt-2 w-44 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-50">
             ${THEMES.map(t => `
                 <button type="button" role="radio" class="theme-swatch" data-theme="${t.id}">
                     <span class="theme-dot" style="background:linear-gradient(135deg,${t.dots[0]} 50%,${t.dots[1]} 50%)"></span>
                     ${t.name}
                 </button>`).join('')}
         </div>`;
-    anchor.appendChild(wrap);
+    anchor.parentNode.insertBefore(wrap, anchor);
 
     wrap.querySelector('#theme-trigger').addEventListener('click', () => toggleThemeMenu());
     wrap.querySelectorAll('.theme-swatch').forEach(b =>
