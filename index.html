@@ -26,125 +26,68 @@
 
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
-   <!-- Thanh Header chính có hiệu ứng trượt ẩn/hiện -->
-<header id="main-header" class="sticky top-0 z-50 glass-card shadow-sm border-b border-slate-200 transition-all duration-300 ease-in-out">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <!-- Thẻ chứa ô Logo "E" / Avatar tích hợp nút tài khoản -->
-            <div class="relative">
-                <div id="profile-trigger" onclick="handleLogoClick()" class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center shadow-md cursor-pointer hover:bg-indigo-700 transition overflow-hidden border-2 border-indigo-100 select-none" title="Tài khoản cá nhân & Đăng nhập">
-                    <span id="logo-letter">E</span>
-                    <img id="logo-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
-                </div>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
 
-                <!-- Bảng Popup thông tin chi tiết & Đăng xuất -->
-                <div id="user-dropdown-menu" class="hidden absolute left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
-                    <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                        <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover shadow-sm">
-                        <div class="min-w-0 flex-1">
-                            <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
-                            <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
-                        </div>
-                    </div>
-                    <div class="pt-3 flex flex-col gap-2">
-                        <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
-                            <span>Trạng thái Cloud</span>
-                            <span class="text-emerald-600 font-bold">Đã đồng bộ</span>
-                        </div>
-                        <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <h1 class="text-base font-bold text-slate-800 leading-tight">EduPulse English</h1>
-                <p class="text-[11px] text-slate-500">Nền tảng học Tiếng Anh THPT</p>
-            </div>
+<!-- ===== SIDEBAR (máy tính) / THANH TAB DƯỚI ĐÁY (điện thoại) ===== -->
+<aside class="side fixed z-40 bottom-0 inset-x-0 lg:inset-y-0 lg:right-auto lg:w-64 flex lg:flex-col items-center lg:items-stretch justify-between lg:justify-start gap-2 px-3 py-2 lg:p-5">
+    <div class="relative flex items-center gap-3 lg:mb-8">
+        <div id="profile-trigger" onclick="handleLogoClick()" class="w-11 h-11 rounded-2xl bg-indigo-600 text-white font-extrabold flex items-center justify-center shadow-md cursor-pointer overflow-hidden select-none shrink-0" title="Tài khoản & Đăng nhập">
+            <span id="logo-letter">E</span>
+            <img id="logo-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
         </div>
-
-        <!-- Cụm bên phải: Nút chọn Khối lớp & Nút thu gọn Header -->
-        <div class="flex items-center gap-3">
-            <!-- Nút chọn Khối lớp -->
-            <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200" id="grade-selector">
-                <button onclick="switchGrade(10)" id="btn-grade-10" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition bg-white text-indigo-600 shadow-sm">
-                    Khối 10
-                </button>
-                <button onclick="switchGrade(11)" id="btn-grade-11" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-600 hover:text-slate-900">
-                    Khối 11
-                </button>
-                <button onclick="switchGrade(12)" id="btn-grade-12" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-600 hover:text-slate-900">
-                    Khối 12 
+        <div class="hidden lg:block leading-tight">
+            <h1 class="font-extrabold text-slate-900">EduPulse</h1>
+            <p class="text-[11px] text-slate-500">Học Tiếng Anh THPT</p>
+        </div>
+        <div id="user-dropdown-menu" class="hidden absolute left-0 bottom-full mb-3 lg:bottom-auto lg:top-0 lg:left-full lg:mb-0 lg:ml-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover">
+                <div class="min-w-0 flex-1">
+                    <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
+                    <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
+                </div>
+            </div>
+            <div class="pt-3 flex flex-col gap-2">
+                <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
+                    <span>Trạng thái Cloud</span><span class="text-emerald-600 font-bold">Đã đồng bộ</span>
+                </div>
+                <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
                 </button>
             </div>
-
-            <!-- Nút Thu gọn Header -->
-            <button onclick="toggleHeader()" id="btn-collapse-header" title="Thu gọn thanh Header" class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 transition">
-                <i class="fa-solid fa-chevron-up text-xs"></i>
-            </button>
         </div>
     </div>
 
-    <!-- Thư viện đăng nhập Google & Cấu hình ẩn -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <div id="g_id_onload"
-         data-client_id="538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse"
-         data-auto_prompt="false">
+    <nav class="flex lg:flex-col gap-1" aria-label="Chọn khối lớp">
+        <p class="hidden lg:block px-3 mb-1 text-xs font-bold text-slate-400">Khối lớp</p>
+        <button onclick="switchGrade(10)" id="btn-grade-10" class="nav-item is-active"><i class="fa-solid fa-seedling"></i> Khối 10</button>
+        <button onclick="switchGrade(11)" id="btn-grade-11" class="nav-item"><i class="fa-solid fa-leaf"></i> Khối 11</button>
+        <button onclick="switchGrade(12)" id="btn-grade-12" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Khối 12</button>
+    </nav>
+
+    <div id="side-tools" class="flex items-center gap-2 lg:mt-auto"></div>
+    <p class="hidden lg:block text-[11px] text-slate-400 mt-3">© 2026 EduPulse · Dự án KHKT</p>
+</aside>
+
+<!-- ===== NỘI DUNG ===== -->
+<main id="app-content-area" class="lg:ml-64 px-4 sm:px-8 pt-8 pb-28 lg:pb-14">
+    <div class="max-w-4xl mx-auto">
+        <header class="hero">
+            <span id="grade-num" aria-hidden="true">10</span>
+            <p class="text-sm font-bold text-indigo-600">Chương trình GDPT 2018 · <span id="grade-count">10 Unit</span></p>
+            <h2 id="grade-title" class="mt-1">Khối 10 - Tiếng Anh THPT</h2>
+            <p id="grade-desc" class="mt-3 max-w-xl text-slate-600"></p>
+        </header>
+        <div id="unit-list-container"></div>
     </div>
-</header>
+</main>
 
-<!-- Nút mũi tên nổi lên ở mép trên màn hình khi Header bị thu gọn -->
-<button id="btn-expand-header" onclick="toggleHeader()" title="Hiện thanh Header" class="hidden fixed top-2 right-6 z-50 bg-indigo-600 text-white px-3 py-2 rounded-xl shadow-lg hover:bg-indigo-700 hover:scale-105 transition flex items-center gap-2 text-xs font-medium">
-    <i class="fa-solid fa-chevron-down"></i>
-    <span>Hiện thanh Menu</span>
-</button>
+<div id="g_id_onload" data-client_id="538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
 
-    <!-- Main Content Area -->
-  <main id="app-content-area" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Banner Giới thiệu -->
-        <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-2xl p-6 sm:p-8 text-white shadow-lg mb-8">
-            <div class="max-w-2xl">
-                <span class="inline-block px-3 py-1 bg-indigo-500/30 text-indigo-100 rounded-full text-xs font-semibold mb-3 border border-indigo-400/30">
-                    Chương trình GDPT 2018
-                </span>
-                <h2 id="grade-title" class="text-2xl sm:text-3xl font-bold">Khối 10 - Tiếng Anh THPT</h2>
-                <p id="grade-desc" class="text-indigo-100 mt-2 text-sm sm:text-base">
-                    Lựa chọn Bài học (Unit) bên dưới để bắt đầu luyện tập từ vựng Flashcard và làm bài tập trắc nghiệm.
-                </p>
-            </div>    
-        </div>  
-
-        <!-- Danh sách Unit / Bài học -->
-        <div class="mb-6">
-            <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-book-open text-indigo-600"></i>
-                Danh sách bài học
-            </h3>
-            <div id="unit-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 text-center text-sm text-slate-500">
-        <p>© 2026 EduPulse English - Dự án KHKT Học sinh THPT</p>
-    </footer>
-
-    <!-- Import các File Data & JS -->
-    <script src="data/grade10.js"></script>
-    <script src="data/grade11.js"></script>
-    <script src="data/grade12.js"></script>
-    <script src="js/app.js"></script>
-
-<!-- ========================================================= -->
-<!-- MINI MUSIC PLAYER (TẢI VÀ PHÁT NHẠC TỪ MÁY TÍNH) -->
-<!-- ========================================================= -->
+<script src="data/grade10.js"></script>
+<script src="data/grade11.js"></script>
+<script src="data/grade12.js"></script>
+<script src="js/app.js"></script>
 
 <div id="music-player-widget" class="fixed bottom-4 right-4 z-50 glass-card rounded-2xl shadow-2xl border border-slate-200/80 bg-white/95 backdrop-blur-md w-80 overflow-hidden transition-all duration-300">
     
@@ -227,5 +170,6 @@
    <audio id="bg-audio" onended="handleTrackEnded()"></audio>
 </div>
      
+
 </body>
 </html>
