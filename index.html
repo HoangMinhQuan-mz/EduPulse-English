@@ -28,59 +28,64 @@
 
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-<!-- ===== SIDEBAR (máy tính) / THANH TAB DƯỚI ĐÁY (điện thoại) ===== -->
-<aside class="side fixed z-40 bottom-0 inset-x-0 lg:inset-y-0 lg:right-auto lg:w-64 flex lg:flex-col items-center lg:items-stretch justify-between lg:justify-start gap-2 px-3 py-2 lg:p-5">
-    <div class="relative flex items-center gap-3 lg:mb-8">
-        <div id="profile-trigger" onclick="handleLogoClick()" class="w-11 h-11 rounded-2xl bg-indigo-600 text-white font-extrabold flex items-center justify-center shadow-md cursor-pointer overflow-hidden select-none shrink-0" title="Tài khoản & Đăng nhập">
-            <span id="logo-letter">E</span>
-            <img id="logo-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
-        </div>
-        <div class="hidden lg:block leading-tight">
-            <h1 class="font-extrabold text-slate-900">EduPulse</h1>
-            <p class="text-[11px] text-slate-500">Học Tiếng Anh THPT</p>
-        </div>
-        <div id="user-dropdown-menu" class="hidden absolute left-0 bottom-full mb-3 lg:bottom-auto lg:top-0 lg:left-full lg:mb-0 lg:ml-4 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
-            <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover">
-                <div class="min-w-0 flex-1">
-                    <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
-                    <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
+<!-- ===== THANH ĐIỀU HƯỚNG NỔI ===== -->
+<header class="sticky top-3 z-40 max-w-6xl mx-auto px-3 pt-3">
+    <div class="topbar-in">
+        <div class="relative flex items-center gap-3">
+            <div id="profile-trigger" onclick="handleLogoClick()" class="w-11 h-11 rounded-2xl bg-indigo-600 text-white font-extrabold flex items-center justify-center shadow-md cursor-pointer overflow-hidden select-none shrink-0" title="Tài khoản & Đăng nhập">
+                <span id="logo-letter">E</span>
+                <img id="logo-avatar" src="" alt="Avatar" class="w-full h-full object-cover hidden">
+            </div>
+            <div class="leading-tight">
+                <h1 class="font-extrabold text-slate-900">EduPulse English</h1>
+                <p class="text-[11px] text-slate-500 hidden sm:block">Nền tảng học Tiếng Anh THPT</p>
+            </div>
+            <div id="user-dropdown-menu" class="hidden absolute left-0 top-full mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50">
+                <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+                    <img id="dropdown-avatar" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover">
+                    <div class="min-w-0 flex-1">
+                        <h4 id="dropdown-name" class="text-xs font-bold text-slate-800 truncate"></h4>
+                        <p id="dropdown-email" class="text-[10px] text-slate-500 truncate"></p>
+                    </div>
+                </div>
+                <div class="pt-3 flex flex-col gap-2">
+                    <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
+                        <span>Trạng thái Cloud</span><span class="text-emerald-600 font-bold">Đã đồng bộ</span>
+                    </div>
+                    <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
+                    </button>
                 </div>
             </div>
-            <div class="pt-3 flex flex-col gap-2">
-                <div class="flex items-center justify-between text-[11px] text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-lg">
-                    <span>Trạng thái Cloud</span><span class="text-emerald-600 font-bold">Đã đồng bộ</span>
-                </div>
-                <button onclick="logoutGoogle()" class="w-full py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 transition rounded-xl text-xs font-semibold flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất tài khoản
-                </button>
-            </div>
         </div>
+
+        <nav class="seg" aria-label="Chọn khối lớp">
+            <button onclick="switchGrade(10)" id="btn-grade-10" class="seg-item is-active">Khối 10</button>
+            <button onclick="switchGrade(11)" id="btn-grade-11" class="seg-item">Khối 11</button>
+            <button onclick="switchGrade(12)" id="btn-grade-12" class="seg-item">Khối 12</button>
+        </nav>
+
+        <div id="side-tools" class="flex items-center gap-2"></div>
     </div>
-
-    <nav class="flex lg:flex-col gap-1" aria-label="Chọn khối lớp">
-        <p class="hidden lg:block px-3 mb-1 text-xs font-bold text-slate-400">Khối lớp</p>
-        <button onclick="switchGrade(10)" id="btn-grade-10" class="nav-item is-active"><i class="fa-solid fa-seedling"></i> Khối 10</button>
-        <button onclick="switchGrade(11)" id="btn-grade-11" class="nav-item"><i class="fa-solid fa-leaf"></i> Khối 11</button>
-        <button onclick="switchGrade(12)" id="btn-grade-12" class="nav-item"><i class="fa-solid fa-graduation-cap"></i> Khối 12</button>
-    </nav>
-
-    <div id="side-tools" class="flex items-center gap-2 lg:mt-auto"></div>
-    <p class="hidden lg:block text-[11px] text-slate-400 mt-3">© 2026 EduPulse · Dự án KHKT</p>
-</aside>
+</header>
 
 <!-- ===== NỘI DUNG ===== -->
-<main id="app-content-area" class="lg:ml-64 px-4 sm:px-8 pt-8 pb-28 lg:pb-14">
-    <div class="max-w-4xl mx-auto">
-        <header class="hero">
-            <span id="grade-num" aria-hidden="true">10</span>
-            <p class="text-sm font-bold text-indigo-600">Chương trình GDPT 2018 · <span id="grade-count">10 Unit</span></p>
-            <h2 id="grade-title" class="mt-1">Khối 10 - Tiếng Anh THPT</h2>
-            <p id="grade-desc" class="mt-3 max-w-xl text-slate-600"></p>
-        </header>
-        <div id="unit-list-container"></div>
-    </div>
+<main id="app-content-area" class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-20">
+    <section class="hero">
+        <span id="grade-num" aria-hidden="true">10</span>
+        <p class="eyebrow">Chương trình GDPT 2018</p>
+        <h2 id="grade-title" class="mt-1">Khối 10 - Tiếng Anh THPT</h2>
+        <p id="grade-desc" class="mt-3 max-w-xl"></p>
+        <div class="hero-stats">
+            <div class="stat"><b id="grade-count">0</b><span>Unit</span></div>
+            <div class="stat"><b id="grade-lessons">0</b><span>Phần học</span></div>
+            <div class="stat"><b id="grade-vocab">0</b><span>Từ vựng</span></div>
+        </div>
+    </section>
+    <div id="unit-list-container"></div>
 </main>
+
+<footer class="text-center text-xs text-slate-400 pb-24">© 2026 EduPulse English · Dự án KHKT Học sinh THPT</footer>
 
 <div id="g_id_onload" data-client_id="538593494259-vpeufj4eq6i1q900avkn11blbpd47ev7.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
 
