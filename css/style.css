@@ -224,14 +224,19 @@ h1, h2, h3, h4 { letter-spacing: -0.015em; }
 @media (max-width: 639px) { .wave { display: none; } }
 
 
-/* ---------- KHI BANNER DÙNG VIDEO: làm tối để chữ trắng luôn đọc được ---------- */
-/* Chỉnh --shade (0 đến 1): càng cao càng tối. Video sáng thì tăng, video tối thì giảm. */
-.hero { --shade: .8; }
-.hero.has-video .banner-video { filter: brightness(.7) saturate(1.1); }
+/* ---------- BANNER: luôn có nền gradient dự phòng + số khối ---------- */
+.hero { background-image: linear-gradient(120deg, rgb(var(--brand-800)), rgb(var(--brand-600)), rgb(var(--accent-500))); }
+#grade-num {
+    position: absolute; right: 1.5rem; top: -1rem; z-index: -1; pointer-events: none; user-select: none;
+    font-size: clamp(8rem, 24vw, 14rem); font-weight: 800; line-height: 1; letter-spacing: -.06em;
+}
+
+/* ---------- KHI BANNER DÙNG VIDEO ----------
+   Video được "nhân" (multiply) với nền gradient: vùng trắng của video sẽ lộ màu gradient,
+   nên chữ trắng luôn đọc được dù video sáng hay tối. */
+.hero { --shade: .5; }
+.hero.has-video .banner-video { mix-blend-mode: multiply; filter: saturate(1.15) contrast(1.05); }
 .hero.has-video .banner-shade {
-    background: linear-gradient(90deg,
-        rgb(var(--brand-900) / var(--shade)),
-        rgb(var(--brand-800) / calc(var(--shade) - .25)) 65%,
-        rgb(var(--brand-900) / .4));
+    background: linear-gradient(90deg, rgb(var(--brand-900) / var(--shade)), rgb(var(--brand-800) / calc(var(--shade) - .2)) 65%, rgb(var(--brand-900) / .2));
 }
 .hero.has-video :is(h2, p, .stat) { text-shadow: 0 2px 14px rgb(0 0 0 / .4); }
