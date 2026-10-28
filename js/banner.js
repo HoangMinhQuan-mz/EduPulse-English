@@ -36,7 +36,7 @@ const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy c
    MUỐN DÙNG VIDEO: bỏ file video vào repo rồi điền đường dẫn bên dưới, ví dụ 'video/banner.mp4'.
    Nên dùng video 5-15 giây, tắt tiếng, dưới ~5MB. Để '' để dùng nền code.
    ========================================================= */
-const BANNER_VIDEO = '';
+const BANNER_VIDEO = 'video/Re.mp4';
 const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy chọn)
 
 (function () {
