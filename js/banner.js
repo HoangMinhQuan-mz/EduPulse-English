@@ -10,7 +10,7 @@ const BANNER_VIDEO = '';
 const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy chọn)
 
 (function () {
-    const WORDS = ['Aa', 'Hello', 'ABC', 'Unit', 'Read', 'Listen', 'Speak', 'Write', 'Good!', 'Vocab', '?', 'Grammar'];
+    const WORDS = ['Aa', 'Hello', 'ABC', 'Unit', 'Read', 'Listen', 'Speak', 'Write', 'Good!', 'Vocab', '?', 'Grammar', 'Ada', 'Hi', 'Lesson'];
     const rnd = (a, b) => a + Math.random() * (b - a);
 
     function build() {
