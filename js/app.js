@@ -1,3 +1,4 @@
+
 /* =========================================================
    DỰ ÁN KHKT: EDUPULSE ENGLISH
    Mục đích: Bộ điều khiển trung tâm (App Logic & DOM Rendering)
@@ -73,227 +74,181 @@ function switchGrade(gradeNumber) {
 function updateGradeButtonsUI(activeGrade) {
     for (let i = 10; i <= 12; i++) {
         const btn = document.getElementById(`btn-grade-${i}`);
-        if (!btn) continue;
-        
-        if (i === activeGrade) {
-            btn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition bg-white text-indigo-600 shadow-sm";
-        } else {
-            btn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition text-slate-600 hover:text-slate-900";
-        }
+        if (btn) btn.className = i === activeGrade ? "seg-item is-active" : "seg-item";
     }
+    const num = document.getElementById('grade-num');
+    if (num) num.textContent = activeGrade;
 }
 
 function updateBannerInfo() {
     const titleEl = document.getElementById('grade-title');
     const descEl = document.getElementById('grade-desc');
-    
-    if (titleEl && currentUnitData) {
-        titleEl.textContent = currentUnitData.title;
-    }
-    if (descEl && currentUnitData) {
-        descEl.textContent = currentUnitData.description;
-    }
+    if (titleEl && currentUnitData) titleEl.textContent = currentUnitData.title;
+    if (descEl && currentUnitData) descEl.textContent = currentUnitData.description;
+}
+
+/* Icon tự chọn theo từ khóa trong tên Unit / phần học */
+const UNIT_ICONS = [[/learn|educat|school|study/i, 'graduation-cap'], [/famil|home/i, 'house-chimney-user'], [/environment|green|nature|protect|climate/i, 'leaf'],
+    [/music|song|art/i, 'music'], [/communit|volunteer|social/i, 'hands-holding-heart'], [/invent|technolog|digital|artificial|robot|ai\b/i, 'lightbulb'],
+    [/gender|equal/i, 'scale-balanced'], [/viet ?nam|international|cultur|heritage|tradition/i, 'earth-asia'], [/health|sport|food|stress|mental/i, 'heart-pulse'],
+    [/career|job|future|work|ambition/i, 'briefcase'], [/travel|tour/i, 'plane'], [/city|urban/i, 'city']];
+const LESSON_ICONS = [[/getting started/i, 'flag-checkered'], [/language/i, 'language'], [/reading/i, 'book-open-reader'], [/speaking/i, 'microphone-lines'],
+    [/listening/i, 'headphones'], [/writing/i, 'pen-nib'], [/communication|culture/i, 'comments'], [/looking back|project/i, 'trophy']];
+function pickIcon(list, text, fallback) {
+    const hit = list.find(([re]) => re.test(text));
+    return hit ? hit[1] : fallback;
+}
+
+function crumbHTML(unit, lesson) {
+    const sep = '<i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>';
+    const tail = lesson
+        ? `<button onclick="openUnitDetail('${unit.id}')" class="crumb">${unit.title}</button>${sep}<span class="font-bold text-slate-700">${lesson.title}</span>`
+        : `<span class="font-bold text-slate-700">${unit.title}</span>`;
+    return `<nav class="crumbs"><button onclick="renderUnitList()" class="crumb"><i class="fa-solid fa-house"></i> Khối ${currentGrade}</button>${sep}${tail}</nav>`;
 }
 
 function renderUnitList() {
     const container = document.getElementById('unit-list-container');
     if (!container || !currentUnitData || !currentUnitData.units) return;
+    const units = currentUnitData.units;
 
-    // Đảm bảo container giữ đúng định dạng lưới card
-    container.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
-    container.innerHTML = '';
-
-    currentUnitData.units.forEach(unit => {
-        const lessonsCount = unit.lessons ? unit.lessons.length : 0;
-        const cardHTML = `
-            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm transition flex flex-col justify-between">
-                <div>
-                    <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-md text-xs font-semibold mb-2">
-                        ${lessonsCount} Phần học theo SGK Global Success
-                    </span>
-                    <h3 class="font-bold text-lg text-slate-800">${unit.title}</h3>
-                    <p class="text-sm text-slate-600 mt-1 mb-4">${unit.description}</p>
-                </div>
-                <button onclick="openUnitDetail('${unit.id}')" class="w-full py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-graduation-cap"></i> Vào học bài này
-                </button>
-            </div>
-        `;
-        container.innerHTML += cardHTML;
+    document.querySelector('.hero').classList.remove('hidden');
+    const lessons = units.reduce((n, u) => n + (u.lessons ? u.lessons.length : 0), 0);
+    const vocab = units.reduce((n, u) => n + (u.lessons || []).reduce((m, l) => m + (l.vocab ? l.vocab.length : 0), 0), 0);
+    [['grade-count', units.length], ['grade-lessons', lessons], ['grade-vocab', vocab]].forEach(([id, v]) => {
+        const el = document.getElementById(id); if (el) el.textContent = v;
     });
 
-    initMouseLightEffect();
+    container.className = "";
+    container.innerHTML = `
+        <h3 class="sec-title"><i class="fa-solid fa-compass"></i> Chọn bài học</h3>
+        <div class="bento">${units.map((unit, i) => `
+            <article class="ucard rise" style="--i:${i}" role="button" tabindex="0" onclick="openUnitDetail('${unit.id}')" onkeydown="if(event.key==='Enter')this.click()">
+                <span class="num">${String(i + 1).padStart(2, '0')}</span>
+                <div class="ico"><i class="fa-solid fa-${pickIcon(UNIT_ICONS, unit.title, 'book-open')}"></i></div>
+                <div>
+                    <h3>${unit.title}</h3>
+                    <p>${unit.description}</p>
+                </div>
+                <div class="ufoot"><span><i class="fa-solid fa-layer-group"></i> ${unit.lessons ? unit.lessons.length : 0} phần học</span><span class="go"><i class="fa-solid fa-arrow-right"></i></span></div>
+            </article>`).join('')}
+        </div>`;
 }
 
 function openUnitDetail(unitId) {
     if (!currentUnitData || !currentUnitData.units) return;
-
     const unit = currentUnitData.units.find(u => u.id === unitId);
-    if (!unit) {
-        alert("Không tìm thấy dữ liệu bài học này!");
-        return;
-    }
-
+    if (!unit) { alert("Không tìm thấy dữ liệu bài học này!"); return; }
     const container = document.getElementById('unit-list-container');
     if (!container) return;
 
-    container.className = "space-y-4 max-w-4xl mx-auto";
-
-    let lessonsHTML = '';
-    if (unit.lessons && unit.lessons.length > 0) {
-        lessonsHTML = unit.lessons.map((lesson, idx) => `
-            <div onclick="openLessonDetail('${unit.id}', '${lesson.id}')" class="p-5 bg-white rounded-2xl border border-slate-200 hover:border-indigo-500 hover:shadow-md cursor-pointer transition flex items-center justify-between group">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 font-bold flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition">
-                        0${idx + 1}
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition">${lesson.title}</h4>
-                        <p class="text-sm text-slate-500">${lesson.subtitle}</p>
-                    </div>
-                </div>
-                <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-indigo-600 transition"></i>
-            </div>
-        `).join('');
-    } else {
-        lessonsHTML = `<p class="text-slate-500 italic">Đang cập nhật nội dung các mục bài học cho Unit này...</p>`;
-    }
+    document.querySelector('.hero').classList.add('hidden');
+    const cards = (unit.lessons && unit.lessons.length)
+        ? unit.lessons.map((l, i) => `
+            <article class="lcard rise" style="--i:${i}" role="button" tabindex="0" onclick="openLessonDetail('${unit.id}', '${l.id}')" onkeydown="if(event.key==='Enter')this.click()">
+                <div class="ico"><i class="fa-solid fa-${pickIcon(LESSON_ICONS, l.title, 'bookmark')}"></i></div>
+                <div class="min-w-0"><h4>${l.title}</h4><p>${l.subtitle}</p></div>
+                <span class="go"><i class="fa-solid fa-arrow-right"></i></span>
+            </article>`).join('')
+        : `<p class="text-slate-500 italic">Đang cập nhật nội dung các mục bài học cho Unit này...</p>`;
 
     container.innerHTML = `
-        <div class="space-y-6">
-            <button onclick="renderUnitList()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-medium flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách Unit
-            </button>
-
-            <div class="p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl shadow-md">
-                <span class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">Khối ${currentGrade}</span>
-                <h2 class="text-2xl font-bold mt-2">${unit.title}</h2>
-                <p class="text-indigo-100 text-sm mt-1">${unit.description}</p>
-            </div>
-
-            <div class="space-y-3">
-                <h3 class="text-lg font-bold text-slate-800 px-1">Danh sách các phần học trong Unit</h3>
-                ${lessonsHTML}
-            </div>
+        ${crumbHTML(unit)}
+        <div class="page-head rise">
+            <div class="ico"><i class="fa-solid fa-${pickIcon(UNIT_ICONS, unit.title, 'book-open')}"></i></div>
+            <div><p class="text-xs font-bold uppercase tracking-wider opacity-80">Khối ${currentGrade}</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold">${unit.title}</h2>
+            <p class="mt-1 text-sm opacity-90 max-w-2xl">${unit.description}</p></div>
         </div>
-    `;
-    
+        <div class="lgrid">${cards}</div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openLessonDetail(unitId, lessonId) {
-    let unit = null;
-    if (currentGrade === 10 && typeof grade10Data !== 'undefined') {
-        unit = grade10Data.units.find(u => u.id === unitId);
-    } else if (currentGrade === 11 && typeof grade11Data !== 'undefined') {
-        unit = grade11Data.units.find(u => u.id === unitId);
-    } else if (currentGrade === 12 && typeof grade12Data !== 'undefined') {
-        unit = grade12Data.units.find(u => u.id === unitId);
-    }
-
+    if (!currentUnitData) return;
+    const unit = currentUnitData.units.find(u => u.id === unitId);
     if (!unit) return;
-    const lesson = unit.lessons.find(l => l.id === lessonId);
+    const idx = unit.lessons.findIndex(l => l.id === lessonId);
+    const lesson = unit.lessons[idx];
     if (!lesson) return;
-
     const container = document.getElementById('unit-list-container');
     if (!container) return;
+    document.querySelector('.hero').classList.add('hidden');
 
-    container.className = "space-y-6 max-w-4xl mx-auto";
-
-    let vocabHTML = '';
-    if (lesson.vocab && lesson.vocab.length > 0) {
-        vocabHTML = `
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-book-bookmark text-indigo-600"></i> Từ vựng trọng tâm bài học
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    ${lesson.vocab.map(v => `
-                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                            <span class="text-indigo-600 font-bold">${v.word}</span>
-                            <span class="text-slate-500 text-xs ml-2">${v.phonetic}</span>
-                            <p class="text-slate-700 text-sm mt-1">${v.meaning}</p>
-                        </div>
-                    `).join('')}
-                </div>
+    const vocabHTML = (lesson.vocab && lesson.vocab.length) ? `
+        <section class="panel rise" style="--i:1">
+            <h3 class="panel-title"><i class="fa-solid fa-book-bookmark"></i> Từ vựng trọng tâm</h3>
+            <div class="grid sm:grid-cols-2 gap-3">${lesson.vocab.map(v => `
+                <div class="vocab"><p><b class="text-indigo-600">${v.word}</b> <span class="text-xs text-slate-500">${v.phonetic}</span></p>
+                <p class="text-sm text-slate-700 mt-1">${v.meaning}</p></div>`).join('')}
             </div>
-        `;
-    }
+        </section>` : '';
 
-    let quizHTML = '';
-    if (lesson.quiz && lesson.quiz.length > 0) {
-        quizHTML = `
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-pen-clip text-indigo-600"></i> Bài tập củng cố
-                </h3>
-                <form id="lesson-quiz-form">
-                    ${lesson.quiz.map((q, qIdx) => `
-                        <div class="mb-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                            <p class="font-semibold text-slate-800 mb-2">Câu ${qIdx + 1}:${q.question}</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                ${q.options.map((opt, oIdx) => `
-                                    <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 cursor-pointer transition text-sm">
-                                        <input type="radio" name="l-question-${qIdx}" value="${oIdx}" class="text-indigo-600">
-                                        <span>${opt}</span>
-                                    </label>
-                                `).join('')}
-                            </div>
+    const quizHTML = (lesson.quiz && lesson.quiz.length) ? `
+        <aside class="panel quiz-panel rise" style="--i:2">
+            <h3 class="panel-title"><i class="fa-solid fa-pen-clip"></i> Bài tập củng cố</h3>
+            <form id="lesson-quiz-form" onsubmit="return false">
+                ${lesson.quiz.map((q, qIdx) => `
+                    <fieldset class="mb-5">
+                        <p class="font-semibold text-slate-800 text-sm mb-2">Câu ${qIdx + 1}: ${q.question}</p>
+                        <div class="grid gap-2">${q.options.map((opt, oIdx) => `
+                            <label data-q="${qIdx}" data-o="${oIdx}" class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white cursor-pointer text-sm">
+                                <input type="radio" name="l-question-${qIdx}" value="${oIdx}" class="accent-indigo-600"><span>${opt}</span>
+                            </label>`).join('')}
                         </div>
-                    `).join('')}
-                    <button type="button" onclick="submitLessonQuiz('${unitId}', '${lessonId}')" class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition">
-                        Nộp bài kiểm tra
-                    </button>
-                </form>
-            </div>
-        `;
-    }
+                    </fieldset>`).join('')}
+                <div id="quiz-result" class="quiz-result hidden"></div>
+                <button type="button" onclick="submitLessonQuiz('${unitId}', '${lessonId}')" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition">Nộp bài</button>
+            </form>
+        </aside>` : '';
 
+    const prev = unit.lessons[idx - 1], next = unit.lessons[idx + 1];
     container.innerHTML = `
-        <div class="space-y-6">
-            <button onclick="openUnitDetail('${unitId}')" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-medium flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách các phần
-            </button>
-
-            <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                <span class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">${unit.title}</span>
-                <h2 class="text-2xl font-bold text-slate-800 mt-1">${lesson.title}</h2>
-                <p class="text-slate-500 text-sm mt-1">${lesson.subtitle}</p>
-                
-                <div class="mt-6 p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
-                    <h4 class="font-bold text-indigo-900 mb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-lightbulb"></i> Tóm tắt lý thuyết / Nội dung chính
-                    </h4>
-                    <p class="text-slate-700 text-sm whitespace-pre-line leading-relaxed">${lesson.theory}</p>
+        ${crumbHTML(unit, lesson)}
+        <div class="lesson-grid ${quizHTML ? 'has-quiz' : ''}">
+            <div class="space-y-5 min-w-0">
+                <section class="panel rise">
+                    <div class="flex items-center gap-4">
+                        <div class="ico" style="--c:var(--brand-500)"><i class="fa-solid fa-${pickIcon(LESSON_ICONS, lesson.title, 'bookmark')}"></i></div>
+                        <div><h2 class="text-2xl font-extrabold text-slate-900">${lesson.title}</h2><p class="text-slate-500 text-sm">${lesson.subtitle}</p></div>
+                    </div>
+                    <div class="theory"><h4 class="font-bold mb-2"><i class="fa-solid fa-lightbulb"></i> Tóm tắt lý thuyết</h4>
+                    <p class="text-sm whitespace-pre-line leading-relaxed">${lesson.theory}</p></div>
+                </section>
+                ${vocabHTML}
+                <div class="pager">
+                    ${prev ? `<button onclick="openLessonDetail('${unitId}', '${prev.id}')"><i class="fa-solid fa-arrow-left"></i> ${prev.title}</button>` : '<span></span>'}
+                    ${next ? `<button onclick="openLessonDetail('${unitId}', '${next.id}')">${next.title} <i class="fa-solid fa-arrow-right"></i></button>` : ''}
                 </div>
             </div>
-
-            ${vocabHTML}
             ${quizHTML}
-        </div>
-    `;
+        </div>`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function submitLessonQuiz(unitId, lessonId) {
-    let unit = null;
-    if (currentGrade === 10) unit = grade10Data.units.find(u => u.id === unitId);
-    else if (currentGrade === 11) unit = grade11Data.units.find(u => u.id === unitId);
-    else if (currentGrade === 12) unit = grade12Data.units.find(u => u.id === unitId);
-
-    if (!unit) return;
-    const lesson = unit.lessons.find(l => l.id === lessonId);
+    const unit = currentUnitData && currentUnitData.units.find(u => u.id === unitId);
+    const lesson = unit && unit.lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
     let score = 0;
     lesson.quiz.forEach((q, qIdx) => {
-        const selected = document.querySelector(`input[name="l-question-${qIdx}"]:checked`);
-        if (selected && parseInt(selected.value) === q.answer) {
-            score++;
-        }
+        const picked = document.querySelector(`input[name="l-question-${qIdx}"]:checked`);
+        if (picked && parseInt(picked.value) === q.answer) score++;
+        document.querySelectorAll(`label[data-q="${qIdx}"]`).forEach(lb => {
+            const o = parseInt(lb.dataset.o);
+            lb.classList.remove('is-right', 'is-wrong');
+            if (o === q.answer) lb.classList.add('is-right');
+            else if (picked && parseInt(picked.value) === o) lb.classList.add('is-wrong');
+        });
     });
-
-    alert(`Kết quả bài tập phần ${lesson.title}:\nĐúng ${score} / ${lesson.quiz.length} câu.`);
+    const total = lesson.quiz.length, box = document.getElementById('quiz-result');
+    if (box) {
+        const msg = score === total ? 'Tuyệt vời, đúng hết!' : score >= total / 2 ? 'Khá tốt, cố thêm chút nữa!' : 'Đọc lại lý thuyết rồi thử lại nhé!';
+        box.textContent = `Đúng ${score} / ${total} câu. ${msg}`;
+        box.classList.remove('hidden');
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 function loadUserProgress() {
@@ -780,3 +735,4 @@ function toggleHeader() {
         expandBtn.classList.remove('hidden');
     }
 }
+
