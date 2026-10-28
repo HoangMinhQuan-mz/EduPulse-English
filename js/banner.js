@@ -1,11 +1,12 @@
-
 /* =========================================================
    EDUPULSE ENGLISH - BANNER ĐỘNG
    Mặc định: nền chuyển động bằng code (gradient, khối trôi, chữ bay, sóng âm).
-   MUỐN DÙNG VIDEO: bỏ file video vào repo rồi điền đường dẫn bên dưới, ví dụ 'video/banner.mp4'.
-   Nên dùng video 5-15 giây, tắt tiếng, dưới ~5MB. Để '' để dùng nền code.
+   MUỐN DÙNG VIDEO: bỏ file video vào thư mục video/ của repo rồi điền đường dẫn
+   vào BANNER_VIDEO, ví dụ 'video/Re.mp4' (đúng chữ hoa/thường). Để '' để dùng nền code.
+   Nên dùng video 5-15 giây, tắt tiếng, dưới ~5MB.
+   LƯU Ý: chỉ sửa đúng giá trị trong dấu nháy ở 2 dòng const dưới đây, không dán thêm gì khác vào file.
    ========================================================= */
-
+const BANNER_VIDEO = '';
 const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy chọn)
 
 (function () {
@@ -14,7 +15,7 @@ const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy c
 
     function build() {
         const hero = document.querySelector('.hero');
-        if (!hero) return;
+        if (!hero || hero.querySelector('.banner-bg')) return;
 
         let letters = '';
         for (let i = 0; i < 14; i++) {
@@ -43,22 +44,11 @@ const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy c
             bg.prepend(v);
         }
     }
-    document.addEventListener('DOMContentLoaded', build);
-})();
 
-        if (BANNER_VIDEO) {
-            const v = document.createElement('video');
-            v.className = 'banner-video';
-            v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
-            v.setAttribute('muted', ''); v.preload = 'metadata';
-            if (BANNER_POSTER) v.poster = BANNER_POSTER;
-            v.addEventListener('canplay', () => { hero.classList.add('has-video'); v.play().catch(() => {}); });
-            v.addEventListener('error', () => v.remove());   // không có file thì giữ nền code
-            v.src = BANNER_VIDEO;
-            bg.prepend(v);
-        }
+    function start() {
+        try { build(); console.log('[EduPulse] Banner động đã chạy'); }
+        catch (e) { console.error('[EduPulse] Lỗi banner:', e); }
     }
-    document.addEventListener('DOMContentLoaded', build);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
 })();
-
-
