@@ -1,3 +1,4 @@
+
 /* =========================================================
    EDUPULSE ENGLISH - BANNER ĐỘNG
    Mặc định: nền chuyển động bằng code (gradient, khối trôi, chữ bay, sóng âm).
@@ -90,3 +91,5 @@ const BANNER_POSTER = '';   // ảnh hiện trong lúc video đang tải (tùy c
     }
     document.addEventListener('DOMContentLoaded', build);
 })();
+
+
