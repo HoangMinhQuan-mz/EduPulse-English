@@ -223,3 +223,15 @@ h1, h2, h3, h4 { letter-spacing: -0.015em; }
 @keyframes bar { from { transform: scaleY(.12); } to { transform: scaleY(var(--h, 1)); } }
 @media (max-width: 639px) { .wave { display: none; } }
 
+
+/* ---------- KHI BANNER DÙNG VIDEO: làm tối để chữ trắng luôn đọc được ---------- */
+/* Chỉnh --shade (0 đến 1): càng cao càng tối. Video sáng thì tăng, video tối thì giảm. */
+.hero { --shade: .8; }
+.hero.has-video .banner-video { filter: brightness(.7) saturate(1.1); }
+.hero.has-video .banner-shade {
+    background: linear-gradient(90deg,
+        rgb(var(--brand-900) / var(--shade)),
+        rgb(var(--brand-800) / calc(var(--shade) - .25)) 65%,
+        rgb(var(--brand-900) / .4));
+}
+.hero.has-video :is(h2, p, .stat) { text-shadow: 0 2px 14px rgb(0 0 0 / .4); }
