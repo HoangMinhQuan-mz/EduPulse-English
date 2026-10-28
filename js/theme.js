@@ -1,3 +1,4 @@
+
 /* =========================================================
    EDUPULSE ENGLISH - ĐỔI THEME GIAO DIỆN
    Thêm theme mới: khai báo [data-theme="tên"] trong css/style.css
@@ -37,14 +38,14 @@ function toggleThemeMenu(force) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const anchor = document.getElementById('btn-collapse-header');
+    const anchor = document.getElementById('side-tools');
     if (!anchor) return;
 
     const wrap = document.createElement('div');
     wrap.className = 'relative';
     wrap.innerHTML = `
         <button id="theme-trigger" type="button" title="Đổi giao diện" aria-haspopup="true"
-            class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 transition">
+            class="icon-btn">
             <i class="fa-solid fa-palette text-xs"></i>
         </button>
         <div id="theme-menu" role="radiogroup" aria-label="Chọn giao diện"
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${t.name}
                 </button>`).join('')}
         </div>`;
-    anchor.parentNode.insertBefore(wrap, anchor);
+    anchor.appendChild(wrap);
 
     wrap.querySelector('#theme-trigger').addEventListener('click', () => toggleThemeMenu());
     wrap.querySelectorAll('.theme-swatch').forEach(b =>
@@ -64,3 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTheme(getSavedTheme());
 });
+
+
+
+
